@@ -1,7 +1,12 @@
 {
-  "name": "my-package",
+  "name": "gamevouchers",
+  "version": "1.0.0",
+  "description": "My mini project",
+  "main": "app.js",
   "scripts": {
-    "build": "babel src -d lib",
-    "test": "jest"
-  }
+    "start": "node app.js"
+  },
+  "dependencies": {
+  },
+  "license": "VIT"
 }
