@@ -1,12 +1,9 @@
 {
   "name": "gamevouchers",
   "version": "1.0.0",
-  "description": "My mini project",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"
-  },
-  "dependencies": {
   },
   "license": "VIT"
 }
