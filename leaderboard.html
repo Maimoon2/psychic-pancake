@@ -833,6 +833,225 @@
                 }
                 
             });
+            document.addEventListener('DOMContentLoaded', function() {
+    // Handle filter tabs (All Time, This Month, etc.)
+    const filterTabs = document.querySelectorAll('.filter-tab');
+    filterTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            filterTabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            updateLeaderboard();
+        });
+    });
+
+    // Handle game filter buttons (All Games, Memory Master, etc.)
+    const gameFilterBtns = document.querySelectorAll('.game-filter-btn');
+    gameFilterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            gameFilterBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            updateLeaderboard();
+        });
+    });
+
+    // Handle logout button
+    document.getElementById('logoutBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        localStorage.removeItem('loggedIn');
+        window.location.href = 'index.html';
+    });
+    
+    // Load user data
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    if (userData) {
+        if (userData.firstName) {
+            const fullName = userData.firstName + ' ' + (userData.lastName || '');
+            const initials = (userData.firstName.charAt(0) + (userData.lastName ? userData.lastName.charAt(0) : '')).toUpperCase();
+            
+            document.getElementById('userName').textContent = fullName;
+            document.getElementById('userInitials').textContent = initials;
+            document.getElementById('userStatsName').textContent = fullName;
+            document.getElementById('userStatsInitials').textContent = initials;
+        }
+
+        if (userData.plan) {
+            const planFormatted = userData.plan.charAt(0).toUpperCase() + userData.plan.slice(1);
+            document.getElementById('userPlan').textContent = planFormatted + ' Plan';
+        }
+    }
+    
+    // Function to update leaderboard based on selected filters
+    function updateLeaderboard() {
+        const timeFilter = document.querySelector('.filter-tab.active').textContent;
+        const gameFilter = document.querySelector('.game-filter-btn.active').textContent;
+        
+        // Show loading message in the table
+        const tbody = document.querySelector('.leaderboard-table tbody');
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Loading...</td></tr>';
+        
+        // Simulate loading delay
+        setTimeout(() => {
+            // Get sample leaderboard data based on filters
+            const data = getSampleData(timeFilter, gameFilter);
+            
+            // Update the table with new data
+            updateTable(data);
+        }, 500);
+    }
+    
+    // Function to get sample data based on filters
+    function getSampleData(timeFilter, gameFilter) {
+        // Default data structure - would come from server in real app
+        const defaultData = [
+            {
+                rank: 1,
+                initials: 'AB',
+                name: 'Alex Brown',
+                level: 42,
+                tier: 'Elite',
+                score: 4572,
+                games: 126,
+                winRate: '87%',
+                badges: ['crown', 'bolt', 'star']
+            },
+            {
+                rank: 2,
+                initials: 'SW',
+                name: 'Sophia Wang',
+                level: 39,
+                tier: 'Master',
+                score: 4127,
+                games: 108,
+                winRate: '83%',
+                badges: ['fire', 'trophy']
+            },
+            {
+                rank: 3,
+                initials: 'MJ',
+                name: 'Mike Johnson',
+                level: 37,
+                tier: 'Master',
+                score: 3845,
+                games: 92,
+                winRate: '79%',
+                badges: ['shield-alt', 'bolt']
+            },
+            {
+                rank: 4,
+                initials: 'LP',
+                name: 'Lisa Park',
+                level: 36,
+                tier: 'Expert',
+                score: 3612,
+                games: 89,
+                winRate: '76%',
+                badges: ['trophy']
+            },
+            {
+                rank: 5,
+                initials: 'RK',
+                name: 'Ryan Kim',
+                level: 34,
+                tier: 'Expert',
+                score: 3458,
+                games: 82,
+                winRate: '73%',
+                badges: ['star']
+            },
+            {
+                rank: 42,
+                initials: 'JS',
+                name: 'John Smith',
+                level: 22,
+                tier: 'Advanced',
+                score: 1245,
+                games: 27,
+                winRate: '68%',
+                badges: ['medal'],
+                isCurrentUser: true
+            }
+        ];
+        
+        // Simple data modifications based on filters (in real app, would fetch from server)
+        let modifiedData = [...defaultData];
+        
+        // Modify data based on time filter
+        if (timeFilter === 'This Month') {
+            modifiedData = modifiedData.map(player => ({
+                ...player,
+                score: Math.floor(player.score * 0.4),
+                games: Math.floor(player.games * 0.3)
+            }));
+        } else if (timeFilter === 'This Week') {
+            modifiedData = modifiedData.map(player => ({
+                ...player,
+                score: Math.floor(player.score * 0.2),
+                games: Math.floor(player.games * 0.15)
+            }));
+        } else if (timeFilter === 'Today') {
+            modifiedData = modifiedData.map(player => ({
+                ...player,
+                score: Math.floor(player.score * 0.05),
+                games: Math.floor(player.games * 0.03)
+            }));
+        }
+        
+        // Modify data based on game filter
+        if (gameFilter !== 'All Games') {
+            // Create some variation for different games
+            modifiedData = modifiedData.map(player => ({
+                ...player,
+                score: Math.floor(player.score * (0.7 + Math.random() * 0.5)),
+                games: Math.max(1, Math.floor(player.games * 0.4))
+            }));
+            
+            // Shuffle the order a bit for different games
+            modifiedData.sort((a, b) => b.score - a.score);
+        }
+        
+        return modifiedData;
+    }
+    
+    // Function to update the table with new data
+    function updateTable(data) {
+        const tbody = document.querySelector('.leaderboard-table tbody');
+        tbody.innerHTML = '';
+        
+        data.forEach(player => {
+            let row = `
+                <tr ${player.isCurrentUser ? 'class="current-user"' : ''}>
+                    <td class="rank-cell">
+                        ${player.rank <= 3 ? 
+                          `<div class="top-rank rank-${player.rank}">${player.rank}</div>` : 
+                          player.rank}
+                    </td>
+                    <td class="player-cell">
+                        <div class="player-avatar">${player.initials}</div>
+                        <div class="player-info">
+                            <div class="player-name">${player.name}</div>
+                            <div class="player-level">Level ${player.level} • ${player.tier}</div>
+                        </div>
+                    </td>
+                    <td class="score-cell">${player.score.toLocaleString()}</td>
+                    <td class="games-cell">${player.games}</td>
+                    <td class="win-rate-cell">${player.winRate}</td>
+                    <td class="badge-cell">
+                        ${player.badges.map(badge => `
+                            <div class="badge"><i class="fas fa-${badge}"></i></div>
+                        `).join('')}
+                    </td>
+                </tr>
+            `;
+            
+            tbody.innerHTML += row;
+        });
+    }
+    
+    // Refresh button functionality
+    document.querySelector('.btn-outline i.fa-sync-alt').parentElement.addEventListener('click', function() {
+        updateLeaderboard();
+    });
+});
         </script>
     </body>
     
