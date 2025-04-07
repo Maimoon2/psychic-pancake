@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>History - GameVoucher</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+    
+            body {
+                background-color: #0f1923;
+                color: #ffffff;
+                line-height: 1.6;
+                -webkit-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+    
+            .dashboard-container {
+                display: flex;
+                min-height: 100vh;
+            }
+    
+            /* Sidebar Styles */
+            .sidebar {
+                width: 250px;
+                background-color: #162635;
+                padding: 20px 0;
+                position: fixed;
+                height: 100vh;
+                overflow-y: auto;
+            }
+    
+            .sidebar-header {
+                padding: 0 20px 20px;
+                border-bottom: 1px solid #2a3a4a;
+            }
+    
+            .logo {
+                font-size: 24px;
+                font-weight: 700;
+                color: #00e5ff;
+                text-decoration: none;
+                display: block;
+                margin-bottom: 5px;
+            }
+    
+            .logo span {
+                color: #ff3e78;
+            }
+    
+            .user-info {
+                display: flex;
+                align-items: center;
+                margin-top: 20px;
+            }
+    
+            .user-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background-color: #2a3a4a;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 10px;
+                font-weight: bold;
+                color: #00e5ff;
+            }
+    
+            .user-details {
+                font-size: 14px;
+            }
+    
+            .user-name {
+                font-weight: 600;
+            }
+    
+            .user-plan {
+                color: #00e5ff;
+                font-size: 12px;
+            }
+    
+            .sidebar-menu {
+                padding: 20px 0;
+            }
+    
+            .menu-item {
+                padding: 12px 20px;
+                display: flex;
+                align-items: center;
+                color: #a0aec0;
+                text-decoration: none;
+                transition: all 0.3s;
+            }
+    
+            .menu-item.active,
+            .menu-item:hover {
+                background-color: #1a2c3d;
+                color: #ffffff;
+                border-left: 4px solid #00e5ff;
+            }
+    
+            .menu-item i {
+                margin-right: 10px;
+                font-size: 18px;
+            }
+    
+            /* Main Content Styles */
+            .main-content {
+                flex: 1;
+                padding: 30px;
+                margin-left: 250px;
+            }
+    
+            .dashboard-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 30px;
+            }
+    
+            .page-title {
+                font-size: 24px;
+                font-weight: 700;
+            }
+    
+            .header-actions {
+                display: flex;
+                gap: 15px;
+            }
+    
+            .btn {
+                padding: 10px 15px;
+                border-radius: 5px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                border: none;
+            }
+    
+            .btn i {
+                margin-right: 8px;
+            }
+    
+            .btn-primary {
+                background-color: #00e5ff;
+                color: #0f1923;
+            }
+    
+            .btn-primary:hover {
+                background-color: #00c2e0;
+            }
+    
+            .btn-outline {
+                background-color: transparent;
+                color: #ffffff;
+                border: 1px solid #2a3a4a;
+            }
+    
+            .btn-outline:hover {
+                background-color: rgba(255, 255, 255, 0.05);
+            }
+    
+            .card {
+                background-color: #1a2a38;
+                border-radius: 10px;
+                padding: 20px;
+                margin-bottom: 30px;
+            }
+    
+            .card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+    
+            .card-title {
+                font-size: 18px;
+                font-weight: 600;
+            }
+    
+            .filter-container {
+                display: flex;
+                gap: 15px;
+                margin-bottom: 20px;
+            }
+    
+            .filter-dropdown {
+                background-color: #162534;
+                border: 1px solid #2a3a4a;
+                color: #ffffff;
+                padding: 8px 15px;
+                border-radius: 5px;
+                font-size: 14px;
+                cursor: pointer;
+            }
+    
+            .search-input {
+                background-color: #162534;
+                border: 1px solid #2a3a4a;
+                color: #ffffff;
+                padding: 8px 15px;
+                border-radius: 5px;
+                font-size: 14px;
+                flex-grow: 1;
+            }
+    
+            .search-input::placeholder {
+                color: #a0aec0;
+            }
+    
+            .history-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 10px;
+            }
+    
+            .history-table th {
+                text-align: left;
+                padding: 15px;
+                background-color: #162534;
+                font-weight: 600;
+                font-size: 14px;
+                color: #a0aec0;
+            }
+    
+            .history-table td {
+                padding: 15px;
+                border-bottom: 1px solid #2a3a4a;
+                font-size: 14px;
+            }
+    
+            .history-table tr:hover {
+                background-color: #162534;
+            }
+    
+            .status {
+                padding: 5px 10px;
+                border-radius: 5px;
+                font-size: 12px;
+                font-weight: 600;
+                display: inline-block;
+            }
+    
+            .status-win {
+                background-color: rgba(46, 213, 115, 0.1);
+                color: #2ed573;
+            }
+    
+            .status-loss {
+                background-color: rgba(255, 71, 87, 0.1);
+                color: #ff4757;
+            }
+    
+            .status-pending {
+                background-color: rgba(254, 202, 87, 0.1);
+                color: #feca57;
+            }
+    
+            .game-type {
+                display: flex;
+                align-items: center;
+            }
+    
+            .game-icon {
+                width: 30px;
+                height: 30px;
+                border-radius: 5px;
+                background-color: #293c51;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 10px;
+            }
+    
+            .game-icon i {
+                color: #00e5ff;
+                font-size: 16px;
+            }
+    
+            .id-cell {
+                font-family: monospace;
+                color: #a0aec0;
+            }
+    
+            .amount {
+                font-weight: 600;
+            }
+    
+            .amount.positive {
+                color: #2ed573;
+            }
+    
+            .amount.negative {
+                color: #ff4757;
+            }
+    
+            .pagination {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 20px;
+            }
+    
+            .pagination-info {
+                color: #a0aec0;
+                font-size: 14px;
+            }
+    
+            .pagination-buttons {
+                display: flex;
+                gap: 10px;
+            }
+    
+            .page-btn {
+                padding: 8px 15px;
+                border-radius: 5px;
+                background-color: #162534;
+                border: 1px solid #2a3a4a;
+                color: #ffffff;
+                cursor: pointer;
+                font-size: 14px;
+                transition: all 0.3s;
+            }
+    
+            .page-btn:hover {
+                background-color: #1a2c3d;
+            }
+    
+            .page-btn.active {
+                background-color: #00e5ff;
+                color: #0f1923;
+                border-color: #00e5ff;
+            }
+    
+            .summary-cards {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 20px;
+                margin-bottom: 30px;
+            }
+    
+            .summary-card {
+                background-color: #1a2a38;
+                border-radius: 10px;
+                padding: 20px;
+                transition: transform 0.3s;
+            }
+    
+            .summary-card:hover {
+                transform: translateY(-5px);
+            }
+    
+            .summary-icon {
+                width: 50px;
+                height: 50px;
+                border-radius: 10px;
+                background-color: rgba(0, 229, 255, 0.1);
+                color: #00e5ff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 15px;
+                font-size: 24px;
+            }
+    
+            .summary-value {
+                font-size: 28px;
+                font-weight: 700;
+                margin-bottom: 5px;
+            }
+    
+            .summary-label {
+                color: #a0aec0;
+                font-size: 14px;
+            }
+    
+            .chart-container {
+                height: 300px;
+                margin-top: 20px;
+            }
+    
+            @media (max-width: 992px) {
+                .summary-cards {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+    
+            @media (max-width: 768px) {
+                .sidebar {
+                    width: 70px;
+                    padding: 15px 0;
+                }
+    
+                .logo {
+                    font-size: 20px;
+                    text-align: center;
+                }
+    
+                .sidebar-header {
+                    padding: 0 10px 15px;
+                }
+    
+                .user-info,
+                .logo span,
+                .user-details,
+                .menu-item span {
+                    display: none;
+                }
+    
+                .menu-item {
+                    justify-content: center;
+                    padding: 15px 0;
+                }
+    
+                .menu-item i {
+                    margin-right: 0;
+                    font-size: 20px;
+                }
+    
+                .main-content {
+                    margin-left: 70px;
+                    padding: 20px;
+                }
+    
+                .table-responsive {
+                    overflow-x: auto;
+                }
+    
+                .filter-container {
+                    flex-direction: column;
+                }
+            }
+    
+            @media (max-width: 576px) {
+                .summary-cards {
+                    grid-template-columns: 1fr;
+                }
+    
+                .dashboard-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 15px;
+                }
+    
+                .pagination {
+                    flex-direction: column;
+                    gap: 15px;
+                }
+            }
+        </style>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    </head>
+    
+    <body>
+        <div class="dashboard-container">
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <a href="#" class="logo">Game<span>Voucher</span></a>
+                    <div class="user-info">
+                        <div class="user-avatar" id="userInitials">JS</div>
+                        <div class="user-details">
+                            <div class="user-name" id="userName">John Smith</div>
+                            <div class="user-plan" id="userPlan">Premium Plan</div>
+                        </div>
+                    </div>
+                </div>
+    
+                <nav class="sidebar-menu">
+                    <a href="dashboard.html" class="menu-item">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="games.html" class="menu-item">
+                        <i class="fas fa-gamepad"></i>
+                        <span>Games</span>
+                    </a>
+                    <a href="Reward.html" class="menu-item">
+                        <i class="fas fa-gift"></i>
+                        <span>Voucher Marketplace</span>
+                    </a>
+                    <a href="vouchers.html" class="menu-item">
+                        <i class="fas fa-ticket-alt"></i>
+                        <span>My Vouchers</span>
+                    </a>
+                    <a href="leaderboard.html" class="menu-item">
+                        <i class="fas fa-trophy"></i>
+                        <span>Leaderboard</span>
+                    </a>
+                    <a href="history.html" class="menu-item active">
+                        <i class="fas fa-history"></i>
+                        <span>History</span>
+                    </a>
+                    <a href="setting.html" class="menu-item">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                    <a href="index.html" class="menu-item" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </nav>
+            </aside>
+    
+            <!-- Main Content -->
+            <main class="main-content">
+                <div class="dashboard-header">
+                    <h1 class="page-title">Game History</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-outline">
+                            <i class="fas fa-coins"></i>
+                            <span id="userCredits">300</span> Credits
+                        </button>
+                        <button class="btn btn-primary" onclick="window.location.href='games.html'">
+                            <i class="fas fa-plus"></i>
+                            Play Now
+                        </button>
+                    </div>
+                </div>
+    
+                <!-- Summary Cards -->
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <div class="summary-value">156</div>
+                        <div class="summary-label">Total Games</div>
+                    </div>
+    
+                    <div class="summary-card">
+                        <div class="summary-icon" style="background-color: rgba(46, 213, 115, 0.1); color: #2ed573;">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="summary-value">87</div>
+                        <div class="summary-label">Total Wins</div>
+                    </div>
+    
+                    <div class="summary-card">
+                        <div class="summary-icon" style="background-color: rgba(255, 71, 87, 0.1); color: #ff4757;">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="summary-value">69</div>
+                        <div class="summary-label">Total Losses</div>
+                    </div>
+    
+                    <div class="summary-card">
+                        <div class="summary-icon" style="background-color: rgba(255, 62, 120, 0.1); color: #ff3e78;">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="summary-value">55.8%</div>
+                        <div class="summary-label">Win Rate</div>
+                    </div>
+                </div>
+    
+                <!-- History Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Recent Activity</h2>
+                        <button class="btn btn-outline">
+                            <i class="fas fa-download"></i>
+                            Export
+                        </button>
+                    </div>
+    
+                    <div class="filter-container">
+                        <select class="filter-dropdown">
+                            <option value="all">All Games</option>
+                            <option value="memory">Memory Master</option>
+                            <option value="puzzle">Puzzle Challenge</option>
+                            <option value="trivia">Trivia Master</option>
+                            <option value="reaction">Reaction Time</option>
+                            <option value="dice">Dice Master</option>
+                            <option value="word">Word Rush</option>
+                        </select>
+    
+                        <select class="filter-dropdown">
+                            <option value="all">All Results</option>
+                            <option value="win">Wins</option>
+                            <option value="loss">Losses</option>
+                            <option value="pending">Pending</option>
+                        </select>
+    
+                        <select class="filter-dropdown">
+                            <option value="7">Last 7 Days</option>
+                            <option value="30">Last 30 Days</option>
+                            <option value="90">Last 90 Days</option>
+                            <option value="all">All Time</option>
+                        </select>
+    
+                        <input type="text" class="search-input" placeholder="Search by ID or game...">
+                    </div>
+    
+                    <div class="table-responsive">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Game ID</th>
+                                    <th>Date & Time</th>
+                                    <th>Game Type</th>
+                                    <th>Stake</th>
+                                    <th>Outcome</th>
+                                    <th>Payout</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="id-cell">#GV87422</td>
+                                    <td>Mar 09, 2025 - 14:32</td>
+                                    <td>
+                                        <div class="game-type">
+                                            <div class="game-icon">
+                                                <i class="fas fa-memory"></i>
+                                            </div>
+                                            Memory Master
+                                        </div>
+                                    </td>
+                                    <td>50 Credits</td>
+                                    <td>Score: 1245</td>
+                                    <td class="amount positive">+100 Credits</td>
+                                    <td><span class="status status-win">Win</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="id-cell">#GV87411</td>
+                                    <td>Mar 09, 2025 - 12:18</td>
+                                    <td>
+                                        <div class="game-type">
+                                            <div class="game-icon">
+                                                <i class="fas fa-puzzle-piece"></i>
+                                            </div>
+                                            Puzzle Challenge
+                                        </div>
+                                    </td>
+                                    <td>75 Credits</td>
+                                    <td>Score: 860</td>
+                                    <td class="amount negative">-75 Credits</td>
+                                    <td><span class="status status-loss">Loss</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="id-cell">#GV87399</td>
+                                    <td>Mar 08, 2025 - 21:45</td>
+                                    <td>
+                                        <div class="game-type">
+                                            <div class="game-icon">
+                                                <i class="fas fa-brain"></i>
+                                            </div>
+                                            Trivia Master
+                                        </div>
+                                    </td>
+                                    <td>60 Credits</td>
+                                    <td>Score: 950</td>
+                                    <td class="amount positive">+120 Credits</td>
+                                    <td><span class="status status-win">Win</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="id-cell">#GV87387</td>
+                                    <td>Mar 08, 2025 - 19:22</td>
+                                    <td>
+                                        <div class="game-type">
+                                            <div class="game-icon">
+                                                <i class="fas fa-bolt"></i>
+                                            </div>
+                                            Reaction Time
+                                        </div>
+                                    </td>
+                                    <td>40 Credits</td>
+                                    <td>Score: 210ms</td>
+                                    <td class="amount positive">+80 Credits</td>
+                                    <td><span class="status status-win">Win</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="id-cell">#GV87365</td>
+                                    <td>Mar 08, 2025 - 16:54</td>
+                                    <td>
+                                        <div class="game-type">
+                                            <div class="game-icon">
+                                                <i class="fas fa-dice"></i>
+                                            </div>
+                                            Dice Master
+                                        </div>
+                                    </td>
+                                    <td>80 Credits</td>
+                                    <td>Score: 420</td>
+                                    <td class="amount negative">-80 Credits</td>
+                                    <td><span class="status status-loss">Loss</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="id-cell">#GV87350</td>
+                                    <td>Mar 07, 2025 - 22:13</td>
+                                    <td>
+                                        <div class="game-type">
+                                            <div class="game-icon">
+                                                <i class="fas fa-keyboard"></i>
+                                            </div>
+                                            Word Rush
+                                        </div>
+                                    </td>
+                                    <td>65 Credits</td>
+                                    <td>Score: TBD</td>
+                                    <td class="amount">-- Credits</td>
+                                    <td><span class="status status-pending">Pending</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="id-cell">#GV87335</td>
+                                    <td>Mar 07, 2025 - 19:42</td>
+                                    <td>
+                                        <div class="game-type">
+                                            <div class="game-icon">
+                                                <i class="fas fa-memory"></i>
+                                            </div>
+                                            Memory Master
+                                        </div>
+                                    </td>
+                                    <td>50 Credits</td>
+                                    <td>Score: 978</td>
+                                    <td class="amount negative">-50 Credits</td>
+                                    <td><span class="status status-loss">Loss</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="id-cell">#GV87321</td>
+                                    <td>Mar 07, 2025 - 17:15</td>
+                                    <td>
+                                        <div class="game-type">
+                                            <div class="game-icon">
+                                                <i class="fas fa-brain"></i>
+                                            </div>
+                                            Trivia Master
+                                        </div>
+                                    </td>
+                                    <td>60 Credits</td>
+                                    <td>Score: 1100</td>
+                                    <td class="amount positive">+120 Credits</td>
+                                    <td><span class="status status-win">Win</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+    
+                    <div class="pagination">
+                        <div class="pagination-info">
+                            Showing 1 to 8 of 156 entries
+                        </div>
+                        <div class="pagination-buttons">
+                            <button class="page-btn" disabled>Previous</button>
+                            <button class="page-btn active">1</button>
+                            <button class="page-btn">2</button>
+                            <button class="page-btn">3</button>
+                            <button class="page-btn">...</button>
+                            <button class="page-btn">20</button>
+                            <button class="page-btn">Next</button>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Monthly Performance</h2>
+                        <select class="filter-dropdown">
+                            <option value="credits">Credits</option>
+                            <option value="games">Games</option>
+                            <option value="winrate">Win Rate</option>
+                        </select>
+                    </div>
+    
+                    <div class="chart-container">
+                        <div style="width: 100%; height: 100%; background-color: #162534; border-radius: 8px; display: flex; justify-content: center; align-items: center; color: #a0aec0;">
+                            <span>Performance Chart Would Display Here</span>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const filterDropdowns = document.querySelectorAll('.filter-dropdown');
+                filterDropdowns.forEach(dropdown => {
+                    dropdown.addEventListener('change', function() {
+                        console.log('Filter changed to:', this.value);
+                    });
+                });
+    
+                const searchInput = document.querySelector('.search-input');
+                searchInput.addEventListener('input', function() {
+                    console.log('Searching for:', this.value);
+                });
+    
+                const pageButtons = document.querySelectorAll('.page-btn');
+                pageButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        if (this.disabled) return;
+                        
+                        pageButtons.forEach(btn => btn.classList.remove('active'));
+                        
+                        if (!this.textContent.includes('Previous') && !this.textContent.includes('Next') && !this.textContent.includes('...')) {
+                            this.classList.add('active');
+                        }
+                        
+                        console.log('Navigating to page:', this.textContent);
+                    });
+                });
+    
+                document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.location.href = 'index.html';
+                });
+            });
+        </script>
+    </body>
+    
+</html>

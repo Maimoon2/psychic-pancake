@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Leaderboard - GameVoucher</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+    
+            body {
+                background-color: #0f1923;
+                color: #ffffff;
+                line-height: 1.6;
+                -webkit-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+    
+            .dashboard-container {
+                display: flex;
+                min-height: 100vh;
+            }
+    
+            /* Sidebar Styles */
+            .sidebar {
+                width: 250px;
+                background-color: #162635;
+                padding: 20px 0;
+                position: fixed;
+                height: 100vh;
+                overflow-y: auto;
+            }
+    
+            .sidebar-header {
+                padding: 0 20px 20px;
+                border-bottom: 1px solid #2a3a4a;
+            }
+    
+            .logo {
+                font-size: 24px;
+                font-weight: 700;
+                color: #00e5ff;
+                text-decoration: none;
+                display: block;
+                margin-bottom: 5px;
+            }
+    
+            .logo span {
+                color: #ff3e78;
+            }
+    
+            .user-info {
+                display: flex;
+                align-items: center;
+                margin-top: 20px;
+            }
+    
+            .user-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background-color: #2a3a4a;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 10px;
+                font-weight: bold;
+                color: #00e5ff;
+            }
+    
+            .user-details {
+                font-size: 14px;
+            }
+    
+            .user-name {
+                font-weight: 600;
+            }
+    
+            .user-plan {
+                color: #00e5ff;
+                font-size: 12px;
+            }
+    
+            .sidebar-menu {
+                padding: 20px 0;
+            }
+    
+            .menu-item {
+                padding: 12px 20px;
+                display: flex;
+                align-items: center;
+                color: #a0aec0;
+                text-decoration: none;
+                transition: all 0.3s;
+            }
+    
+            .menu-item.active,
+            .menu-item:hover {
+                background-color: #1a2c3d;
+                color: #ffffff;
+                border-left: 4px solid #00e5ff;
+            }
+    
+            .menu-item i {
+                margin-right: 10px;
+                font-size: 18px;
+            }
+    
+            /* Main Content Styles */
+            .main-content {
+                flex: 1;
+                padding: 30px;
+                margin-left: 250px;
+            }
+    
+            .dashboard-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 30px;
+            }
+    
+            .page-title {
+                font-size: 24px;
+                font-weight: 700;
+            }
+    
+            .header-actions {
+                display: flex;
+                gap: 15px;
+            }
+    
+            .btn {
+                padding: 10px 15px;
+                border-radius: 5px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                border: none;
+            }
+    
+            .btn i {
+                margin-right: 8px;
+            }
+    
+            .btn-primary {
+                background-color: #00e5ff;
+                color: #0f1923;
+            }
+    
+            .btn-primary:hover {
+                background-color: #00c2e0;
+            }
+    
+            .btn-outline {
+                background-color: transparent;
+                color: #ffffff;
+                border: 1px solid #2a3a4a;
+            }
+    
+            .btn-outline:hover {
+                background-color: rgba(255, 255, 255, 0.05);
+            }
+    
+            .card {
+                background-color: #1a2a38;
+                border-radius: 10px;
+                padding: 20px;
+                margin-bottom: 30px;
+            }
+    
+            .card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+    
+            .card-title {
+                font-size: 18px;
+                font-weight: 600;
+            }
+    
+            .card-actions {
+                display: flex;
+                gap: 10px;
+            }
+    
+            /* Filter tabs */
+            .filter-tabs {
+                display: flex;
+                margin-bottom: 20px;
+                border-bottom: 1px solid #2a3a4a;
+            }
+    
+            .filter-tab {
+                padding: 10px 20px;
+                cursor: pointer;
+                color: #a0aec0;
+                border-bottom: 3px solid transparent;
+                font-weight: 600;
+            }
+    
+            .filter-tab.active {
+                color: #00e5ff;
+                border-bottom: 3px solid #00e5ff;
+            }
+    
+            /* Leaderboard Table */
+            .leaderboard-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+    
+            .leaderboard-table th {
+                text-align: left;
+                padding: 15px;
+                color: #a0aec0;
+                font-weight: 600;
+                border-bottom: 1px solid #2a3a4a;
+            }
+    
+            .leaderboard-table td {
+                padding: 15px;
+                border-bottom: 1px solid #2a3a4a;
+            }
+    
+            .leaderboard-table tr:hover {
+                background-color: rgba(42, 58, 74, 0.3);
+            }
+    
+            .leaderboard-table tr.current-user {
+                background-color: rgba(0, 229, 255, 0.1);
+            }
+    
+            .rank-cell {
+                font-weight: 700;
+                width: 60px;
+            }
+    
+            .top-rank {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                font-weight: 700;
+            }
+    
+            .rank-1 {
+                background-color: #ffd700;
+                color: #0f1923;
+            }
+    
+            .rank-2 {
+                background-color: #c0c0c0;
+                color: #0f1923;
+            }
+    
+            .rank-3 {
+                background-color: #cd7f32;
+                color: #0f1923;
+            }
+    
+            .player-cell {
+                display: flex;
+                align-items: center;
+            }
+    
+            .player-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background-color: #2a3a4a;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 15px;
+                font-weight: bold;
+                color: #00e5ff;
+            }
+    
+            .player-info {
+                display: flex;
+                flex-direction: column;
+            }
+    
+            .player-name {
+                font-weight: 600;
+            }
+    
+            .player-level {
+                font-size: 12px;
+                color: #a0aec0;
+            }
+    
+            .score-cell {
+                font-weight: 700;
+                color: #00e5ff;
+            }
+    
+            .games-cell, .win-rate-cell {
+                color: #a0aec0;
+            }
+    
+            .badge-cell {
+                display: flex;
+                gap: 5px;
+            }
+    
+            .badge {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                background-color: #293c51;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 12px;
+                color: #00e5ff;
+            }
+    
+            /* Your stats card */
+            .stats-card {
+                display: flex;
+                align-items: center;
+                background-color: #162534;
+                border-radius: 10px;
+                padding: 20px;
+                margin-bottom: 30px;
+            }
+    
+            .stats-avatar {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                background-color: #2a3a4a;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 20px;
+                font-weight: bold;
+                font-size: 32px;
+                color: #00e5ff;
+            }
+    
+            .stats-info {
+                flex: 1;
+            }
+    
+            .stats-name {
+                font-size: 24px;
+                font-weight: 700;
+                margin-bottom: 5px;
+            }
+    
+            .stats-rank {
+                display: flex;
+                align-items: center;
+                color: #a0aec0;
+                font-size: 16px;
+                margin-bottom: 10px;
+            }
+    
+            .stats-rank strong {
+                color: #00e5ff;
+                margin: 0 5px;
+            }
+    
+            .stats-detail {
+                display: flex;
+                gap: 20px;
+            }
+    
+            .detail-item {
+                display: flex;
+                flex-direction: column;
+            }
+    
+            .detail-value {
+                font-size: 18px;
+                font-weight: 700;
+                color: #ffffff;
+            }
+    
+            .detail-label {
+                font-size: 12px;
+                color: #a0aec0;
+            }
+    
+            .stats-actions {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+    
+            /* Game filter */
+            .game-filter {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+                margin-bottom: 20px;
+            }
+    
+            .game-filter-btn {
+                background-color: #162534;
+                border: none;
+                border-radius: 20px;
+                padding: 8px 15px;
+                color: #a0aec0;
+                cursor: pointer;
+                transition: all 0.3s;
+                font-size: 14px;
+            }
+    
+            .game-filter-btn.active {
+                background-color: rgba(0, 229, 255, 0.2);
+                color: #00e5ff;
+            }
+    
+            @media (max-width: 992px) {
+                .challengers-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+    
+            @media (max-width: 768px) {
+                .sidebar {
+                    width: 70px;
+                    padding: 15px 0;
+                }
+    
+                .logo {
+                    font-size: 20px;
+                    text-align: center;
+                }
+    
+                .sidebar-header {
+                    padding: 0 10px 15px;
+                }
+    
+                .user-info,
+                .logo span,
+                .user-details,
+                .menu-item span {
+                    display: none;
+                }
+    
+                .menu-item {
+                    justify-content: center;
+                    padding: 15px 0;
+                }
+    
+                .menu-item i {
+                    margin-right: 0;
+                    font-size: 20px;
+                }
+    
+                .main-content {
+                    margin-left: 70px;
+                    padding: 20px;
+                }
+    
+                .stats-card {
+                    flex-direction: column;
+                    text-align: center;
+                }
+    
+                .stats-avatar {
+                    margin-right: 0;
+                    margin-bottom: 15px;
+                }
+    
+                .stats-detail {
+                    justify-content: center;
+                    margin-bottom: 15px;
+                }
+    
+                .stats-actions {
+                    width: 100%;
+                }
+    
+                .dashboard-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 15px;
+                }
+            }
+    
+            @media (max-width: 576px) {
+                .challengers-grid {
+                    grid-template-columns: 1fr;
+                }
+    
+                .stats-detail {
+                    flex-wrap: wrap;
+                    justify-content: space-between;
+                }
+    
+                .detail-item {
+                    width: 45%;
+                    margin-bottom: 10px;
+                }
+    
+                .leaderboard-table {
+                    font-size: 14px;
+                }
+    
+                .filter-tabs {
+                    overflow-x: auto;
+                    white-space: nowrap;
+                    padding-bottom: 5px;
+                }
+    
+                .filter-tab {
+                    padding: 10px 15px;
+                }
+            }
+        </style>
+        <!-- Font Awesome for icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    </head>
+    
+    <body>
+        <div class="dashboard-container">
+            <!-- Sidebar Navigation -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <a href="#" class="logo">Game<span>Voucher</span></a>
+                    <div class="user-info">
+                        <div class="user-avatar" id="userInitials">JS</div>
+                        <div class="user-details">
+                            <div class="user-name" id="userName">John Smith</div>
+                            <div class="user-plan" id="userPlan">Premium Plan</div>
+                        </div>
+                    </div>
+                </div>
+    
+                <nav class="sidebar-menu">
+                    <a href="dashboard.html" class="menu-item">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="games.html" class="menu-item">
+                        <i class="fas fa-gamepad"></i>
+                        <span>Games</span>
+                    </a>
+                    <a href="Reward.html" class="menu-item">
+                        <i class="fas fa-gift"></i>
+                        <span>Voucher Marketplace</span>
+                    </a>
+                    <a href="vouchers.html" class="menu-item">
+                        <i class="fas fa-ticket-alt"></i>
+                        <span>My Vouchers</span>
+                    </a>
+                    <a href="leaderboard.html" class="menu-item active">
+                        <i class="fas fa-trophy"></i>
+                        <span>Leaderboard</span>
+                    </a>
+                    <a href="history.html" class="menu-item">
+                        <i class="fas fa-history"></i>
+                        <span>History</span>
+                    </a>
+                    <a href="setting.html" class="menu-item">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                    <a href="index.html" class="menu-item" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </nav>
+            </aside>
+    
+            <!-- Main Dashboard Content -->
+            <main class="main-content">
+                <div class="dashboard-header">
+                    <h1 class="page-title">Leaderboard</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-outline">
+                            <i class="fas fa-coins"></i>
+                            <span id="userCredits">300</span> Credits
+                        </button>
+                    </div>
+                </div>
+    
+                <!-- Your Stats Card -->
+                <div class="stats-card">
+                    <div class="stats-avatar" id="userStatsInitials">JS</div>
+                    <div class="stats-info">
+                        <div class="stats-name" id="userStatsName">John Smith</div>
+                        <div class="stats-rank">You are currently ranked <strong>#42</strong> out of <strong>3,752</strong> players</div>
+                        <div class="stats-detail">
+                            <div class="detail-item">
+                                <div class="detail-value">1,245</div>
+                                <div class="detail-label">High Score</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value">27</div>
+                                <div class="detail-label">Games Played</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value">68%</div>
+                                <div class="detail-label">Win Rate</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value">8</div>
+                                <div class="detail-label">Achievements</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stats-actions">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-share-alt"></i>
+                            Share Stats
+                        </button>
+                        <button class="btn btn-outline">
+                            <i class="fas fa-chart-line"></i>
+                            View Progress
+                        </button>
+                    </div>
+                </div>
+    
+                <!-- Leaderboard Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Global Rankings</h2>
+                        <div class="card-actions">
+                            <button class="btn btn-outline">
+                                <i class="fas fa-filter"></i>
+                                Filter
+                            </button>
+                            <button class="btn btn-outline">
+                                <i class="fas fa-sync-alt"></i>
+                                Refresh
+                            </button>
+                        </div>
+                    </div>
+    
+                    <!-- Filter Tabs -->
+                    <div class="filter-tabs">
+                        <div class="filter-tab active">All Time</div>
+                        <div class="filter-tab">This Month</div>
+                        <div class="filter-tab">This Week</div>
+                        <div class="filter-tab">Today</div>
+                    </div>
+    
+                    <!-- Game Filter Buttons -->
+                    <div class="game-filter">
+                        <button class="game-filter-btn active">All Games</button>
+                        <button class="game-filter-btn">Memory Master</button>
+                        <button class="game-filter-btn">Puzzle Challenge</button>
+                        <button class="game-filter-btn">Trivia Master</button>
+                        <button class="game-filter-btn">Reaction Time</button>
+                        <button class="game-filter-btn">Dice Master</button>
+                    </div>
+    
+                    <!-- Leaderboard Table -->
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Player</th>
+                                <th>Score</th>
+                                <th>Games</th>
+                                <th>Win Rate</th>
+                                <th>Badges</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="rank-cell">
+                                    <div class="top-rank rank-1">1</div>
+                                </td>
+                                <td class="player-cell">
+                                    <div class="player-avatar">AB</div>
+                                    <div class="player-info">
+                                        <div class="player-name">Alex Brown</div>
+                                        <div class="player-level">Level 42 • Elite</div>
+                                    </div>
+                                </td>
+                                <td class="score-cell">4,572</td>
+                                <td class="games-cell">126</td>
+                                <td class="win-rate-cell">87%</td>
+                                <td class="badge-cell">
+                                    <div class="badge"><i class="fas fa-crown"></i></div>
+                                    <div class="badge"><i class="fas fa-bolt"></i></div>
+                                    <div class="badge"><i class="fas fa-star"></i></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="rank-cell">
+                                    <div class="top-rank rank-2">2</div>
+                                </td>
+                                <td class="player-cell">
+                                    <div class="player-avatar">SW</div>
+                                    <div class="player-info">
+                                        <div class="player-name">Sophia Wang</div>
+                                        <div class="player-level">Level 39 • Master</div>
+                                    </div>
+                                </td>
+                                <td class="score-cell">4,127</td>
+                                <td class="games-cell">108</td>
+                                <td class="win-rate-cell">83%</td>
+                                <td class="badge-cell">
+                                    <div class="badge"><i class="fas fa-fire"></i></div>
+                                    <div class="badge"><i class="fas fa-trophy"></i></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="rank-cell">
+                                    <div class="top-rank rank-3">3</div>
+                                </td>
+                                <td class="player-cell">
+                                    <div class="player-avatar">MJ</div>
+                                    <div class="player-info">
+                                        <div class="player-name">Mike Johnson</div>
+                                        <div class="player-level">Level 37 • Master</div>
+                                    </div>
+                                </td>
+                                <td class="score-cell">3,845</td>
+                                <td class="games-cell">92</td>
+                                <td class="win-rate-cell">79%</td>
+                                <td class="badge-cell">
+                                    <div class="badge"><i class="fas fa-shield-alt"></i></div>
+                                    <div class="badge"><i class="fas fa-bolt"></i></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="rank-cell">4</td>
+                                <td class="player-cell">
+                                    <div class="player-avatar">LP</div>
+                                    <div class="player-info">
+                                        <div class="player-name">Lisa Park</div>
+                                        <div class="player-level">Level 36 • Expert</div>
+                                    </div>
+                                </td>
+                                <td class="score-cell">3,612</td>
+                                <td class="games-cell">89</td>
+                                <td class="win-rate-cell">76%</td>
+                                <td class="badge-cell">
+                                    <div class="badge"><i class="fas fa-trophy"></i></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="rank-cell">5</td>
+                                <td class="player-cell">
+                                    <div class="player-avatar">RK</div>
+                                    <div class="player-info">
+                                        <div class="player-name">Ryan Kim</div>
+                                        <div class="player-level">Level 34 • Expert</div>
+                                    </div>
+                                </td>
+                                <td class="score-cell">3,458</td>
+                                <td class="games-cell">82</td>
+                                <td class="win-rate-cell">73%</td>
+                                <td class="badge-cell">
+                                    <div class="badge"><i class="fas fa-star"></i></div>
+                                </td>
+                            </tr>
+                            <tr class="current-user">
+                                <td class="rank-cell">42</td>
+                                <td class="player-cell">
+                                    <div class="player-avatar">JS</div>
+                                    <div class="player-info">
+                                        <div class="player-name">John Smith</div>
+                                        <div class="player-level">Level 22 • Advanced</div>
+                                    </div>
+                                </td>
+                                <td class="score-cell">1,245</td>
+                                <td class="games-cell">27</td>
+                                <td class="win-rate-cell">68%</td>
+                                <td class="badge-cell">
+                                    <div class="badge"><i class="fas fa-medal"></i></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const filterTabs = document.querySelectorAll('.filter-tab');
+                filterTabs.forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        filterTabs.forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+                    });
+                });
+    
+                const gameFilterBtns = document.querySelectorAll('.game-filter-btn');
+                gameFilterBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        gameFilterBtns.forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                    });
+                });
+    
+                document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    localStorage.removeItem('loggedIn');
+                    window.location.href = 'index.html';
+                });
+    
+                
+                const userData = JSON.parse(localStorage.getItem('userData'));
+                if (userData) {
+                    if (userData.firstName) {
+                        const fullName = userData.firstName + ' ' + (userData.lastName || '');
+                        const initials = (userData.firstName.charAt(0) + (userData.lastName ? userData.lastName.charAt(0) : '')).toUpperCase();
+                        
+                        document.getElementById('userName').textContent = fullName;
+                        document.getElementById('userInitials').textContent = initials;
+                        document.getElementById('userStatsName').textContent = fullName;
+                        document.getElementById('userStatsInitials').textContent = initials;
+                    }
+    
+                    if (userData.plan) {
+                        const planFormatted = userData.plan.charAt(0).toUpperCase() + userData.plan.slice(1);
+                        document.getElementById('userPlan').textContent = planFormatted + ' Plan';
+                    }
+                }
+                
+            });
+        </script>
+    </body>
+    
+</html>

@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Vouchers - GameVoucher</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+    
+            body {
+                background-color: #0f1923;
+                color: #ffffff;
+                line-height: 1.6;
+                -webkit-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+    
+            .dashboard-container {
+                display: flex;
+                min-height: 100vh;
+            }
+    
+            /* Sidebar Styles */
+            .sidebar {
+                width: 250px;
+                background-color: #162635;
+                padding: 20px 0;
+                position: fixed;
+                height: 100vh;
+                overflow-y: auto;
+            }
+    
+            .sidebar-header {
+                padding: 0 20px 20px;
+                border-bottom: 1px solid #2a3a4a;
+            }
+    
+            .logo {
+                font-size: 24px;
+                font-weight: 700;
+                color: #00e5ff;
+                text-decoration: none;
+                display: block;
+                margin-bottom: 5px;
+            }
+    
+            .logo span {
+                color: #ff3e78;
+            }
+    
+            .user-info {
+                display: flex;
+                align-items: center;
+                margin-top: 20px;
+            }
+    
+            .user-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background-color: #2a3a4a;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 10px;
+                font-weight: bold;
+                color: #00e5ff;
+            }
+    
+            .user-details {
+                font-size: 14px;
+            }
+    
+            .user-name {
+                font-weight: 600;
+            }
+    
+            .user-plan {
+                color: #00e5ff;
+                font-size: 12px;
+            }
+    
+            .sidebar-menu {
+                padding: 20px 0;
+            }
+    
+            .menu-item {
+                padding: 12px 20px;
+                display: flex;
+                align-items: center;
+                color: #a0aec0;
+                text-decoration: none;
+                transition: all 0.3s;
+            }
+    
+            .menu-item.active,
+            .menu-item:hover {
+                background-color: #1a2c3d;
+                color: #ffffff;
+                border-left: 4px solid #00e5ff;
+            }
+    
+            .menu-item i {
+                margin-right: 10px;
+                font-size: 18px;
+            }
+    
+            /* Main Content Styles */
+            .main-content {
+                flex: 1;
+                padding: 30px;
+                margin-left: 250px;
+            }
+    
+            .dashboard-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 30px;
+            }
+    
+            .page-title {
+                font-size: 24px;
+                font-weight: 700;
+            }
+    
+            .header-actions {
+                display: flex;
+                gap: 15px;
+            }
+    
+            .btn {
+                padding: 10px 15px;
+                border-radius: 5px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                border: none;
+            }
+    
+            .btn i {
+                margin-right: 8px;
+            }
+    
+            .btn-primary {
+                background-color: #00e5ff;
+                color: #0f1923;
+            }
+    
+            .btn-primary:hover {
+                background-color: #00c2e0;
+            }
+    
+            .btn-outline {
+                background-color: transparent;
+                color: #ffffff;
+                border: 1px solid #2a3a4a;
+            }
+    
+            .btn-outline:hover {
+                background-color: rgba(255, 255, 255, 0.05);
+            }
+    
+            .card {
+                background-color: #1a2a38;
+                border-radius: 10px;
+                padding: 20px;
+                margin-bottom: 30px;
+            }
+    
+            .card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+    
+            .card-title {
+                font-size: 18px;
+                font-weight: 600;
+            }
+    
+            .card-action {
+                color: #00e5ff;
+                text-decoration: none;
+                font-size: 14px;
+            }
+    
+            .card-action:hover {
+                text-decoration: underline;
+            }
+    
+            /* Voucher Specific Styles */
+            .voucher-tabs {
+                display: flex;
+                margin-bottom: 20px;
+                border-bottom: 1px solid #2a3a4a;
+            }
+    
+            .voucher-tab {
+                padding: 12px 20px;
+                cursor: pointer;
+                font-weight: 600;
+                border-bottom: 3px solid transparent;
+                transition: all 0.3s;
+            }
+    
+            .voucher-tab.active {
+                color: #00e5ff;
+                border-bottom-color: #00e5ff;
+            }
+    
+            .voucher-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+            }
+    
+            .voucher-card {
+                background-color: #162534;
+                border-radius: 10px;
+                overflow: hidden;
+                transition: transform 0.3s;
+                position: relative;
+            }
+    
+            .voucher-card:hover {
+                transform: translateY(-5px);
+            }
+    
+            .voucher-header {
+                height: 80px;
+                background: linear-gradient(135deg, #00e5ff 0%, #0097b2 100%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #0f1923;
+                font-weight: 700;
+                font-size: 20px;
+            }
+    
+            .netflix-header {
+                background: linear-gradient(135deg, #e50914 0%, #b81d24 100%);
+                color: white;
+            }
+    
+            .amazon-header {
+                background: linear-gradient(135deg, #ff9900 0%, #e68a00 100%);
+                color: #0f1923;
+            }
+    
+            .spotify-header {
+                background: linear-gradient(135deg, #1db954 0%, #168d40 100%);
+                color: white;
+            }
+    
+            .uber-header {
+                background: linear-gradient(135deg, #000000 0%, #333333 100%);
+                color: white;
+            }
+    
+            .steam-header {
+                background: linear-gradient(135deg, #171a21 0%, #1a3c5a 100%);
+                color: white;
+            }
+    
+            .starbucks-header {
+                background: linear-gradient(135deg, #00704a 0%, #005738 100%);
+                color: white;
+            }
+    
+            .voucher-body {
+                padding: 20px;
+            }
+    
+            .voucher-value {
+                font-size: 28px;
+                font-weight: 700;
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+            }
+    
+            .voucher-value i {
+                margin-right: 10px;
+                color: #00e5ff;
+            }
+    
+            .voucher-description {
+                color: #a0aec0;
+                margin-bottom: 15px;
+                font-size: 14px;
+                min-height: 60px;
+            }
+    
+            .voucher-meta {
+                display: flex;
+                justify-content: space-between;
+                border-top: 1px solid #2a3a4a;
+                padding-top: 15px;
+                font-size: 12px;
+                color: #a0aec0;
+            }
+    
+            .voucher-history {
+                margin-top: 30px;
+            }
+    
+            .voucher-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+    
+            .voucher-table th {
+                background-color: #162534;
+                text-align: left;
+                padding: 12px 15px;
+                font-weight: 600;
+                color: #a0aec0;
+            }
+    
+            .voucher-table td {
+                padding: 15px;
+                border-bottom: 1px solid #2a3a4a;
+            }
+    
+            .status-badge {
+                display: inline-block;
+                padding: 5px 10px;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: 600;
+            }
+    
+            .status-active {
+                background-color: rgba(0, 229, 255, 0.1);
+                color: #00e5ff;
+            }
+    
+            .status-expired {
+                background-color: rgba(255, 62, 120, 0.1);
+                color: #ff3e78;
+            }
+    
+            .status-redeemed {
+                background-color: rgba(87, 180, 87, 0.1);
+                color: #57b457;
+            }
+    
+            .voucher-badge {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background-color: #ff3e78;
+                color: white;
+                padding: 5px 10px;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: 600;
+            }
+    
+            .market-card {
+                display: flex;
+                background-color: #162534;
+                border-radius: 10px;
+                overflow: hidden;
+                margin-bottom: 15px;
+                transition: transform 0.3s;
+            }
+    
+            .market-card:hover {
+                transform: translateX(5px);
+            }
+    
+            .market-icon {
+                width: 80px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: #1a2c3d;
+                color: #00e5ff;
+                font-size: 25px;
+            }
+    
+            .market-details {
+                flex: 1;
+                padding: 15px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+    
+            .market-info h3 {
+                font-weight: 600;
+                margin-bottom: 5px;
+            }
+    
+            .market-info p {
+                color: #a0aec0;
+                font-size: 13px;
+            }
+    
+            .market-action {
+                display: flex;
+                align-items: center;
+            }
+    
+            .market-price {
+                background-color: rgba(0, 229, 255, 0.1);
+                color: #00e5ff;
+                padding: 5px 10px;
+                border-radius: 5px;
+                font-weight: 600;
+                margin-right: 15px;
+            }
+    
+            .progress-bar {
+                height: 5px;
+                background-color: #162534;
+                border-radius: 5px;
+                overflow: hidden;
+                margin-top: 15px;
+            }
+    
+            .progress {
+                height: 100%;
+                background-color: #00e5ff;
+                width: 65%;
+            }
+    
+            @media (max-width: 992px) {
+                .voucher-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+    
+            @media (max-width: 768px) {
+                .sidebar {
+                    width: 70px;
+                    padding: 15px 0;
+                }
+    
+                .logo {
+                    font-size: 20px;
+                    text-align: center;
+                }
+    
+                .sidebar-header {
+                    padding: 0 10px 15px;
+                }
+    
+                .user-info,
+                .logo span,
+                .user-details,
+                .menu-item span {
+                    display: none;
+                }
+    
+                .menu-item {
+                    justify-content: center;
+                    padding: 15px 0;
+                }
+    
+                .menu-item i {
+                    margin-right: 0;
+                    font-size: 20px;
+                }
+    
+                .main-content {
+                    margin-left: 70px;
+                    padding: 20px;
+                }
+            }
+    
+            @media (max-width: 576px) {
+                .voucher-grid {
+                    grid-template-columns: 1fr;
+                }
+    
+                .dashboard-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 15px;
+                }
+    
+                .voucher-tabs {
+                    overflow-x: auto;
+                    white-space: nowrap;
+                    width: 100%;
+                }
+            }
+        </style>
+        <!-- Font Awesome for icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    </head>
+    
+    <body>
+        <div class="dashboard-container">
+            <!-- Sidebar Navigation -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <a href="#" class="logo">Game<span>Voucher</span></a>
+                    <div class="user-info">
+                        <div class="user-avatar" id="userInitials">JS</div>
+                        <div class="user-details">
+                            <div class="user-name" id="userName">John Smith</div>
+                            <div class="user-plan" id="userPlan">Premium Plan</div>
+                        </div>
+                    </div>
+                </div>
+    
+                <nav class="sidebar-menu">
+                    <a href="dashboard.html" class="menu-item">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="games.html" class="menu-item">
+                        <i class="fas fa-gamepad"></i>
+                        <span>Games</span>
+                    </a>
+                    <a href="Reward.html" class="menu-item">
+                        <i class="fas fa-gift"></i>
+                        <span>Voucher Marketplace</span>
+                    </a>
+                    <a href="vouchers.html" class="menu-item active">
+                        <i class="fas fa-ticket-alt"></i>
+                        <span>My Vouchers</span>
+                    </a>
+                    <a href="leaderboard.html" class="menu-item">
+                        <i class="fas fa-trophy"></i>
+                        <span>Leaderboard</span>
+                    </a>
+                    <a href="history.html" class="menu-item">
+                        <i class="fas fa-history"></i>
+                        <span>History</span>
+                    </a>
+                    <a href="setting.html" class="menu-item">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                    <a href="index.html" class="menu-item" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </nav>
+            </aside>
+    
+            <!-- Main Dashboard Content -->
+            <main class="main-content">
+                <div class="dashboard-header">
+                    <h1 class="page-title">My Vouchers</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-outline">
+                            <i class="fas fa-coins"></i>
+                            <span id="userCredits">300</span> Credits
+                        </button>
+                        <a href="Reward.html" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Get More Vouchers
+                        </a>
+                    </div>
+                </div>
+    
+    
+                    <!-- My Vouchers Tab Content -->
+                    <div class="voucher-grid">
+                        <div class="voucher-card">
+                            <div class="voucher-badge">NEW</div>
+                            <div class="voucher-header netflix-header">
+                                <i class="fas fa-film"></i>&nbsp; NETFLIX
+                            </div>
+                            <div class="voucher-body">
+                                <div class="voucher-value">
+                                    <i class="fas fa-ticket-alt"></i> $15
+                                </div>
+                                <div class="voucher-description">
+                                    Netflix 1-Month Premium subscription. Enjoy unlimited movies and TV shows.
+                                </div>
+                                <button class="btn btn-primary" style="width: 100%;">Use Voucher</button>
+                                <div class="voucher-meta">
+                                    <span><i class="far fa-calendar-alt"></i> Expires: May 15, 2025</span>
+                                    <span><i class="fas fa-tag"></i> Streaming</span>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="voucher-card">
+                            <div class="voucher-header uber-header">
+                                <i class="fas fa-utensils"></i>&nbsp; UBEREATS
+                            </div>
+                            <div class="voucher-body">
+                                <div class="voucher-value">
+                                    <i class="fas fa-ticket-alt"></i> $10
+                                </div>
+                                <div class="voucher-description">
+                                    $10 off your next UberEats order. Valid for orders over $20.
+                                </div>
+                                <button class="btn btn-primary" style="width: 100%;">Use Voucher</button>
+                                <div class="voucher-meta">
+                                    <span><i class="far fa-calendar-alt"></i> Expires: Apr 30, 2025</span>
+                                    <span><i class="fas fa-tag"></i> Food</span>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="voucher-card">
+                            <div class="voucher-header amazon-header">
+                                <i class="fas fa-shopping-cart"></i>&nbsp; AMAZON
+                            </div>
+                            <div class="voucher-body">
+                                <div class="voucher-value">
+                                    <i class="fas fa-ticket-alt"></i> $20
+                                </div>
+                                <div class="voucher-description">
+                                    $20 Amazon Gift Card. Use on millions of items across Amazon.
+                                </div>
+                                <button class="btn btn-primary" style="width: 100%;">Use Voucher</button>
+                                <div class="voucher-meta">
+                                    <span><i class="far fa-calendar-alt"></i> Expires: May 25, 2025</span>
+                                    <span><i class="fas fa-tag"></i> Shopping</span>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="voucher-card">
+                            <div class="voucher-header spotify-header">
+                                <i class="fas fa-music"></i>&nbsp; SPOTIFY
+                            </div>
+                            <div class="voucher-body">
+                                <div class="voucher-value">
+                                    <i class="fas fa-ticket-alt"></i> $12
+                                </div>
+                                <div class="voucher-description">
+                                    Spotify Premium 1-Month subscription. Ad-free music streaming.
+                                </div>
+                                <button class="btn btn-primary" style="width: 100%;">Use Voucher</button>
+                                <div class="voucher-meta">
+                                    <span><i class="far fa-calendar-alt"></i> Expires: Jun 10, 2025</span>
+                                    <span><i class="fas fa-tag"></i> Music</span>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="voucher-card">
+                            <div class="voucher-header steam-header">
+                                <i class="fas fa-gamepad"></i>&nbsp; STEAM
+                            </div>
+                            <div class="voucher-body">
+                                <div class="voucher-value">
+                                    <i class="fas fa-ticket-alt"></i> $25
+                                </div>
+                                <div class="voucher-description">
+                                    $25 Steam Wallet Credit. Use for games, software and hardware.
+                                </div>
+                                <button class="btn btn-primary" style="width: 100%;">Use Voucher</button>
+                                <div class="voucher-meta">
+                                    <span><i class="far fa-calendar-alt"></i> Expires: Jul 15, 2025</span>
+                                    <span><i class="fas fa-tag"></i> Gaming</span>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="voucher-card">
+                            <div class="voucher-header starbucks-header">
+                                <i class="fas fa-coffee"></i>&nbsp; STARBUCKS
+                            </div>
+                            <div class="voucher-body">
+                                <div class="voucher-value">
+                                    <i class="fas fa-ticket-alt"></i> $15
+                                </div>
+                                <div class="voucher-description">
+                                    $15 Starbucks Gift Card. Valid at any Starbucks location.
+                                </div>
+                                <button class="btn btn-primary" style="width: 100%;">Use Voucher</button>
+                                <div class="voucher-meta">
+                                    <span><i class="far fa-calendar-alt"></i> Expires: Jun 5, 2025</span>
+                                    <span><i class="fas fa-tag"></i> Beverage</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    
+        <script>
+            /*document.addEventListener('DOMContentLoaded', function () {
+                // Tab switching functionality
+                const tabs = document.querySelectorAll('.voucher-tab');
+                const tabContents = document.querySelectorAll('.card > div:not(.voucher-tabs, .card-header)');
+                
+                tabs.forEach((tab, index) => {
+                    tab.addEventListener('click', function() {
+                        // Remove active class from all tabs
+                        tabs.forEach(t => t.classList.remove('active'));
+                        
+                        // Add active class to clicked tab
+                        this.classList.add('active');
+                        
+                        // Hide all tab contents
+                        tabContents.forEach(content => {
+                            content.style.display = 'none';
+                        });
+                        
+                        // Show selected tab content
+                        tabContents[index].style.display = index === 0 ? 'grid' : 'block';
+                    });
+                });
+     
+                // Initialize first tab as active
+                tabs[0].click();
+                
+                // Logout functionality
+                document.getElementById('logoutBtn').addEventListener('click', function (e) {
+                    e.preventDefault
+                });
+            */
+        </script>
+    </body>
+    
+</html>

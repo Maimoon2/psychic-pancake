@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Games - GameVoucher</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+    
+            body {
+                background-color: #0f1923;
+                color: #ffffff;
+                line-height: 1.6;
+                -webkit-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+    
+            .dashboard-container {
+                display: flex;
+                min-height: 100vh;
+            }
+    
+            /* Sidebar Styles */
+            .sidebar {
+                width: 250px;
+                background-color: #162635;
+                padding: 20px 0;
+                position: fixed;
+                height: 100vh;
+                overflow-y: auto;
+            }
+    
+            .sidebar-header {
+                padding: 0 20px 20px;
+                border-bottom: 1px solid #2a3a4a;
+            }
+    
+            .logo {
+                font-size: 24px;
+                font-weight: 700;
+                color: #00e5ff;
+                text-decoration: none;
+                display: block;
+                margin-bottom: 5px;
+            }
+    
+            .logo span {
+                color: #ff3e78;
+            }
+    
+            .user-info {
+                display: flex;
+                align-items: center;
+                margin-top: 20px;
+            }
+    
+            .user-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background-color: #2a3a4a;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 10px;
+                font-weight: bold;
+                color: #00e5ff;
+            }
+    
+            .user-details {
+                font-size: 14px;
+            }
+    
+            .user-name {
+                font-weight: 600;
+            }
+    
+            .user-plan {
+                color: #00e5ff;
+                font-size: 12px;
+            }
+    
+            .sidebar-menu {
+                padding: 20px 0;
+            }
+    
+            .menu-item {
+                padding: 12px 20px;
+                display: flex;
+                align-items: center;
+                color: #a0aec0;
+                text-decoration: none;
+                transition: all 0.3s;
+            }
+    
+            .menu-item.active,
+            .menu-item:hover {
+                background-color: #1a2c3d;
+                color: #ffffff;
+                border-left: 4px solid #00e5ff;
+            }
+    
+            .menu-item i {
+                margin-right: 10px;
+                font-size: 18px;
+            }
+    
+            /* Main Content Styles */
+            .main-content {
+                flex: 1;
+                padding: 30px;
+                margin-left: 250px;
+            }
+    
+            .dashboard-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 30px;
+            }
+    
+            .page-title {
+                font-size: 24px;
+                font-weight: 700;
+            }
+    
+            .header-actions {
+                display: flex;
+                gap: 15px;
+            }
+    
+            .btn {
+                padding: 10px 15px;
+                border-radius: 5px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                border: none;
+            }
+    
+            .btn i {
+                margin-right: 8px;
+            }
+    
+            .btn-primary {
+                background-color: #00e5ff;
+                color: #0f1923;
+            }
+    
+            .btn-primary:hover {
+                background-color: #00c2e0;
+            }
+    
+            .btn-outline {
+                background-color: transparent;
+                color: #ffffff;
+                border: 1px solid #2a3a4a;
+            }
+    
+            .btn-outline:hover {
+                background-color: rgba(255, 255, 255, 0.05);
+            }
+    
+            /* Game page specific styles */
+            .game-categories {
+                display: flex;
+                margin-bottom: 25px;
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+    
+            .category-btn {
+                padding: 8px 16px;
+                background-color: #162534;
+                color: #a0aec0;
+                border-radius: 20px;
+                margin-right: 10px;
+                cursor: pointer;
+                transition: all 0.3s;
+                white-space: nowrap;
+                border: none;
+            }
+    
+            .category-btn.active,
+            .category-btn:hover {
+                background-color: #00e5ff;
+                color: #0f1923;
+            }
+    
+            .games-container {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 25px;
+                margin-bottom: 30px;
+            }
+    
+            .game-card {
+                background-color: #1a2a38;
+                border-radius: 10px;
+                overflow: hidden;
+                transition: transform 0.3s, box-shadow 0.3s;
+                cursor: pointer;
+                position: relative;
+            }
+    
+            .game-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 10px 20px rgba(0, 229, 255, 0.1);
+            }
+    
+            .game-image {
+                height: 180px;
+                background-color: #162534;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+            }
+    
+            .game-image i {
+                font-size: 50px;
+                color: #00e5ff;
+            }
+    
+            .game-category-tag {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background-color: rgba(0, 229, 255, 0.2);
+                color: #00e5ff;
+                padding: 5px 10px;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: 600;
+            }
+    
+            .hot-tag {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                background-color: rgba(255, 62, 120, 0.2);
+                color: #ff3e78;
+                padding: 5px 10px;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: 600;
+            }
+    
+            .game-details {
+                padding: 20px;
+            }
+    
+            .game-title {
+                font-weight: 600;
+                margin-bottom: 10px;
+                font-size: 18px;
+                color: #ffffff;
+            }
+    
+            .game-description {
+                color: #a0aec0;
+                font-size: 14px;
+                margin-bottom: 15px;
+                line-height: 1.4;
+            }
+    
+            .game-stats {
+                display: flex;
+                justify-content: space-between;
+                font-size: 14px;
+                color: #a0aec0;
+                margin-bottom: 15px;
+            }
+    
+            .play-btn {
+                background-color: #00e5ff;
+                color: #0f1923;
+                padding: 10px;
+                border-radius: 5px;
+                text-align: center;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background-color 0.3s;
+                border: none;
+                width: 100%;
+            }
+    
+            .play-btn:hover {
+                background-color: #00c2e0;
+            }
+    
+            .card {
+                background-color: #1a2a38;
+                border-radius: 10px;
+                padding: 20px;
+                margin-bottom: 30px;
+            }
+    
+            .card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+    
+            .card-title {
+                font-size: 18px;
+                font-weight: 600;
+            }
+    
+            /* Responsive styles */
+            @media (max-width: 992px) {
+                .games-container {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+    
+            @media (max-width: 768px) {
+                .sidebar {
+                    width: 70px;
+                    padding: 15px 0;
+                }
+    
+                .logo {
+                    font-size: 20px;
+                    text-align: center;
+                }
+    
+                .sidebar-header {
+                    padding: 0 10px 15px;
+                }
+    
+                .user-info,
+                .logo span,
+                .user-details,
+                .menu-item span {
+                    display: none;
+                }
+    
+                .menu-item {
+                    justify-content: center;
+                    padding: 15px 0;
+                }
+    
+                .menu-item i {
+                    margin-right: 0;
+                    font-size: 20px;
+                }
+    
+                .main-content {
+                    margin-left: 70px;
+                    padding: 20px;
+                }
+            }
+    
+            @media (max-width: 576px) {
+                .games-container {
+                    grid-template-columns: 1fr;
+                }
+    
+                .dashboard-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 15px;
+                }
+            }
+        </style>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    </head>
+    
+    <body>
+        <div class="dashboard-container">
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <a href="index.html" class="logo">Game<span>Voucher</span></a>
+                    <div class="user-info">
+                        <div class="user-avatar" id="userInitials">JS</div>
+                        <div class="user-details">
+                            <div class="user-name" id="userName">John Smith</div>
+                            <div class="user-plan" id="userPlan">Premium Plan</div>
+                        </div>
+                    </div>
+                </div>
+    
+                <nav class="sidebar-menu">
+                    <a href="dashboard.html" class="menu-item">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="games.html" class="menu-item active">
+                        <i class="fas fa-gamepad"></i>
+                        <span>Games</span>
+                    </a>
+                    <a href="Reward.html" class="menu-item">
+                        <i class="fas fa-gift"></i>
+                        <span>Voucher Marketplace</span>
+                    </a>
+                    <a href="vouchers.html" class="menu-item">
+                        <i class="fas fa-ticket-alt"></i>
+                        <span>My Vouchers</span>
+                    </a>
+                    <a href="leaderboard.html" class="menu-item">
+                        <i class="fas fa-trophy"></i>
+                        <span>Leaderboard</span>
+                    </a>
+                    <a href="history.html" class="menu-item">
+                        <i class="fas fa-history"></i>
+                        <span>History</span>
+                    </a>
+                    <a href="setting.html" class="menu-item">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                    <a href="index.html" class="menu-item" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </nav>
+            </aside>
+    
+            <main class="main-content">
+                <div class="dashboard-header">
+                    <h1 class="page-title">Games</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-outline">
+                            <i class="fas fa-coins"></i>
+                            <span id="userCredits">300</span> Credits
+                        </button>
+                        <!--<button class="btn btn-primary">
+                            <i class="fas fa-star"></i>
+                            Featured Games
+                        </button>-->
+                    </div>
+                </div>
+    
+                <div class="game-categories">
+                    <button class="category-btn active">All Games</button>
+                    <button class="category-btn">Featured</button>
+                    <button class="category-btn">Popular</button>
+                    <button class="category-btn">New</button>
+                    <button class="category-btn">Memory</button>
+                    <button class="category-btn">Puzzle</button>
+                    <button class="category-btn">Quiz</button>
+                    <button class="category-btn">Card</button>
+                    <button class="category-btn">Strategy</button>
+                    <button class="category-btn">Reflex</button>
+                </div>
+    
+                <div class="games-container">
+                    <!-- Game 1 -->
+                    <div class="game-card">
+                        <div class="game-image">
+                            <img src="game1img.jpg" height="100%" width="100%">
+                            <div class="hot-tag">Hot!</div>
+                        </div>
+                        <div class="game-details">
+                            <h3 class="game-title">Coin Flip</h3>
+                            <p class="game-description">Bet on heads or tails. Double your stakes with this classic game of chance!</p>
+                            <div class="game-stats">
+                                <span><i class="fas fa-users"></i> 5.2k players</span>
+                                <span><i class="fas fa-trophy"></i> 100 pts max</span>
+                            </div>
+                            <button class="play-btn" onclick="window.location.href='game1lead.html'">Play Now</button>
+                        </div>
+                    </div>
+    
+                    <!-- Game 2 -->
+                    <div class="game-card">
+                        <div class="game-image">
+                            <img src="game2img.jpg" height="100%" width="100%">
+                        </div>
+                        <div class="game-details">
+                            <h3 class="game-title">Dice Roll</h3>
+                            <p class="game-description">Predict dice outcomes and win big. Higher risk, higher rewards!</p>
+                            <div class="game-stats">
+                                <span><i class="fas fa-users"></i> 4.8k players</span>
+                                <span><i class="fas fa-trophy"></i> 150 pts max</span>
+                            </div>
+                            <button class="play-btn" onclick="window.location.href='diceroll.html'">Play Now</button>
+                        </div>
+                    </div>
+    
+                    <!-- Game 3 -->
+                    <div class="game-card">
+                        <div class="game-image">
+                            <img src="game3img.jpg" height="100%" width="100%">
+                        </div>
+                        <div class="game-details">
+                            <h3 class="game-title">Memory Master</h3>
+                            <p class="game-description">Test your memory skills by matching pairs of cards in this classic game.</p>
+                            <div class="game-stats">
+                                <span><i class="fas fa-users"></i> 2.5k players</span>
+                                <span><i class="fas fa-trophy"></i> 50 pts max</span>
+                            </div>
+                            <button class="play-btn" onclick="window.location.href='memorycard.html'">Play Now</button>
+                        </div>
+                    </div>
+    
+                    <!-- Game 4 -->
+                    <div class="game-card">
+                        <div class="game-image">
+                            <img src="game4img.jpg" height="100%" width="100%">
+                        </div>
+                        <div class="game-details">
+                            <h3 class="game-title">Ping Pong</h3>
+                            <p class="game-description">Ping Pong dive into an exciting adventure as a skilled young individual,</p>
+                            <div class="game-stats">
+                                <span><i class="fas fa-users"></i> 7.3k players</span>
+                                <span><i class="fas fa-trophy"></i> 200 pts max</span>
+                            </div>
+                            <button class="play-btn" onclick="window.location.href='game4.html'">Play Now</button>
+                        </div>
+                    </div>
+                    
+    
+                    <!-- Game 5 -->
+                    <div class="game-card">
+                        <div class="game-image">
+                            <img src="game5img.jpg" height="100%" width="100%">
+                        </div>
+                        <div class="game-details">
+                            <h3 class="game-title">Cricket 2020</h3>
+                            <p class="game-description">Do you have match-winning skills? You are the last wicket and you have to score as much as you can.</p>
+                            <div class="game-stats">
+                                <span><i class="fas fa-users"></i> 1.8k players</span>
+                                <span><i class="fas fa-trophy"></i> 75 pts max</span>
+                            </div>
+                            <button class="play-btn" onclick="window.location.href='game5.html'">Play Now</button>
+                        </div>
+                    </div>
+    
+                    <!-- Game 6 -->
+                    <div class="game-card">
+                        <div class="game-image">
+                            <img src="game6img.jpg" height="100%" width="100%">
+                        </div>
+                        <div class="game-details">
+                            <h3 class="game-title">Plane War-Endless Missiles</h3>
+                            <p class="game-description">drive the super fighter and start the journey to conquer the sky.</p>
+                            <div class="game-stats">
+                                <span><i class="fas fa-users"></i> 3.2k players</span>
+                                <span><i class="fas fa-trophy"></i> 60 pts max</span>
+                            </div>
+                            <button class="play-btn" onclick="window.location.href='game6.html'">Play Now</button>
+                        </div>
+                    </div>
+    
+                    <!-- Game 7 -->
+                    <div class="game-card">
+                        <div class="game-image">
+                            <img src="game7img.jpg" height="100%" width="100%">
+                        </div>
+                        <div class="game-details">
+                            <h3 class="game-title">Super Mario</h3>
+                            <p class="game-description">Super Mario is a side-scrolling 2D platform game with amazing fantasy adventure.</p>
+                            <div class="game-stats">
+                                <span><i class="fas fa-users"></i> 2.1k players</span>
+                                <span><i class="fas fa-trophy"></i> 40 pts max</span>
+                            </div>
+                            <button class="play-btn" onclick="window.location.href='game1.html'">Play Now</button>
+                        </div>
+                    </div>
+    
+                    <!-- Game 8 -->
+                    <div class="game-card">
+                        <div class="game-image">
+                            <img src="game8img.jpg" height="100%" width="100%">
+                        </div>
+                        <div class="game-details">
+                            <h3 class="game-title">Ramp Race</h3>
+                            <p class="game-description">In this exciting race, you will have a unique opportunity to become a master of high-speed tracks!</p>
+                            <div class="game-stats">
+                                <span><i class="fas fa-users"></i> 3.7k players</span>
+                                <span><i class="fas fa-trophy"></i> 80 pts max</span>
+                            </div>
+                            <button class="play-btn" onclick="window.location.href='game2.html'">Play Now</button>
+                        </div>
+                    </div>
+    
+                    <!-- Game 9 -->
+                    <div class="game-card">
+                        <div class="game-image">
+                            <img src="game9img.jpg" height="100%" width="100%">
+                        </div>
+                        <div class="game-details">
+                            <h3 class="game-title">Hill Climb</h3>
+                            <p class="game-description">A game where you will drive your car through bumpy road. Cover the maximum distance and make a record.</p>
+                            <div class="game-stats">
+                                <span><i class="fas fa-users"></i> 2.7k players</span>
+                                <span><i class="fas fa-trophy"></i> 65 pts max</span>
+                            </div>
+                            <button class="play-btn" onclick="window.location.href='game3.html'">Play Now</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    
+        <script>
+            /*document.addEventListener('DOMContentLoaded', function () {
+                const categoryButtons = document.querySelectorAll('.category-btn');
+                categoryButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        categoryButtons.forEach(btn => btn.classList.remove('active'));
+                        this.classList.add('active');
+                        alert('Filtering games by: ' + this.textContent);
+                    });
+                });
+    
+
+                const gameCards = document.querySelectorAll('.game-card');
+                gameCards.forEach(card => {
+                    card.addEventListener('click', function(e) {
+                        if (e.target.classList.contains('play-btn')) {
+                            const gameTitle = this.querySelector('.game-title').textContent;
+                            alert('Loading game: ' + gameTitle);
+                        }
+                    });
+                    
+                    const playBtn = card.querySelector('.play-btn');
+                    playBtn.addEventListener('click', function(e) {
+                        e.stopPropagation(); 
+                        const gameTitle = card.querySelector('.game-title').textContent;
+                        alert('Loading game: ' + gameTitle);
+                    });
+                });
+
+                document.getElementById('logoutBtn').addEventListener('click', function (e) {
+                    e.preventDefault();
+                    alert('Logging out...');
+                });
+            });*/
+        </script>
+    </body>
+    
+</html>
