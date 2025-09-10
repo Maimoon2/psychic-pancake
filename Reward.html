@@ -408,7 +408,7 @@
                     <div class="header-actions">
                         <button class="btn btn-outline">
                             <i class="fas fa-coins"></i>
-                            <span id="userCredits">300</span> Credits
+                            <span id="userCredits">0</span> Credits
                         </button>
                     </div>
                 </div>
@@ -441,7 +441,7 @@
                             <p class="reward-description">Redeem for games, software, hardware, and more on Steam.</p>
                             <div class="reward-footer">
                                 <div class="reward-price">250 Credits</div>
-                                <button class="btn btn-primary" style="font-size: 14px;">Redeem</button>
+                                <button class="btn btn-primary" style="font-size: 14px;">Buy</button>
                             </div>
                         </div>
                     </div>
@@ -462,7 +462,7 @@
                             <p class="reward-description">Get PlayStation gift cards for games, add-ons, and subscriptions.</p>
                             <div class="reward-footer">
                                 <div class="reward-price">300 Credits</div>
-                                <button class="btn btn-primary" style="font-size: 14px;">Redeem</button>
+                                <button class="btn btn-primary" style="font-size: 14px;">Buy</button>
                             </div>
                         </div>
                     </div>
@@ -484,7 +484,7 @@
                             <p class="reward-description">One month of Netflix Standard plan with unlimited movies and shows.</p>
                             <div class="reward-footer">
                                 <div class="reward-price">200 Credits</div>
-                                <button class="btn btn-primary" style="font-size: 14px;">Redeem</button>
+                                <button class="btn btn-primary" style="font-size: 14px;">Buy</button>
                             </div>
                         </div>
                     </div>
@@ -505,7 +505,7 @@
                             <p class="reward-description">Enjoy ad-free music streaming for one month with premium features.</p>
                             <div class="reward-footer">
                                 <div class="reward-price">150 Credits</div>
-                                <button class="btn btn-primary" style="font-size: 14px;">Redeem</button>
+                                <button class="btn btn-primary" style="font-size: 14px;">Buy</button>
                             </div>
                         </div>
                     </div>
@@ -527,7 +527,7 @@
                             <p class="reward-description">$10 off your next UberEats order. Minimum purchase required.</p>
                             <div class="reward-footer">
                                 <div class="reward-price">100 Credits</div>
-                                <button class="btn btn-primary" style="font-size: 14px;">Redeem</button>
+                                <button class="btn btn-primary" style="font-size: 14px;">Buy</button>
                             </div>
                         </div>
                     </div>
@@ -548,7 +548,7 @@
                             <p class="reward-description">$10 Starbucks gift card for coffee, tea, and snacks.</p>
                             <div class="reward-footer">
                                 <div class="reward-price">120 Credits</div>
-                                <button class="btn btn-primary" style="font-size: 14px;">Redeem</button>
+                                <button class="btn btn-primary" style="font-size: 14px;">Buy</button>
                             </div>
                         </div>
                     </div>
@@ -570,7 +570,7 @@
                             <p class="reward-description">$20 Amazon gift card to spend on millions of products.</p>
                             <div class="reward-footer">
                                 <div class="reward-price">220 Credits</div>
-                                <button class="btn btn-primary" style="font-size: 14px;">Redeem</button>
+                                <button class="btn btn-primary" style="font-size: 14px;">Buy</button>
                             </div>
                         </div>
                     </div>
@@ -591,7 +591,7 @@
                             <p class="reward-description">15% off your next Nike purchase online or in-store.</p>
                             <div class="reward-footer">
                                 <div class="reward-price">180 Credits</div>
-                                <button class="btn btn-primary" style="font-size: 14px;">Redeem</button>
+                                <button class="btn btn-primary" style="font-size: 14px;">Buy</button>
                             </div>
                         </div>
                     </div>
@@ -609,7 +609,7 @@
                             <p class="reward-description">$30 off electronics purchases of $150 or more at major retailers.</p>
                             <div class="reward-footer">
                                 <div class="reward-price">320 Credits</div>
-                                <button class="btn btn-primary" style="font-size: 14px;">Redeem</button>
+                                <button class="btn btn-primary" style="font-size: 14px;">Buy</button>
                             </div>
                         </div>
                     </div>
@@ -617,8 +617,31 @@
             </main>
         </div>
     
+        <script src="app.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
+                // Update purchased vouchers state
+                updatePurchasedVouchers();
+                
+                function updatePurchasedVouchers() {
+                    const userVouchers = JSON.parse(localStorage.getItem('userVouchers') || '[]');
+                    const buyButtons = document.querySelectorAll('.reward-footer .btn-primary');
+                    
+                    buyButtons.forEach(button => {
+                        const rewardCard = button.closest('.reward-card');
+                        const rewardTitle = rewardCard.querySelector('.reward-title').textContent;
+                        
+                        // Check if this voucher has already been purchased
+                        const isPurchased = userVouchers.some(voucher => voucher.title === rewardTitle);
+                        
+                        if (isPurchased) {
+                            button.textContent = 'Purchased';
+                            button.style.backgroundColor = '#57b457';
+                            button.disabled = true;
+                        }
+                    });
+                }
+                
                 const tabs = document.querySelectorAll('.tab-btn');
                 const rewardCards = document.querySelectorAll('.reward-card');
     
@@ -655,17 +678,95 @@
                     });
                 });
     
-                const redeemButtons = document.querySelectorAll('.reward-footer .btn-primary');
-                redeemButtons.forEach(button => {
+                const buyButtons = document.querySelectorAll('.reward-footer .btn-primary');
+                buyButtons.forEach(button => {
                     button.addEventListener('click', function() {
-                        const rewardTitle = this.closest('.reward-details').querySelector('.reward-title').textContent;
-                        const rewardPrice = this.closest('.reward-footer').querySelector('.reward-price').textContent;
+                        const rewardCard = this.closest('.reward-card');
+                        const rewardTitle = rewardCard.querySelector('.reward-title').textContent;
+                        const rewardPriceText = rewardCard.querySelector('.reward-price').textContent;
+                        const rewardPrice = parseInt(rewardPriceText.replace(' Credits', ''));
                         
-                        if (confirm(`Are you sure you want to redeem ${rewardTitle} for ${rewardPrice}?`)) {
-                            alert(`Congratulations! You've redeemed ${rewardTitle}. Check 'My Vouchers' for your code.`);
+                        // Get current user credits
+                        const currentCredits = parseInt(document.getElementById('userCredits').textContent);
+                        
+                        if (currentCredits < rewardPrice) {
+                            alert(`Insufficient credits! You need ${rewardPrice} credits but only have ${currentCredits}.`);
+                            return;
+                        }
+                        
+                        if (confirm(`Are you sure you want to buy ${rewardTitle} for ${rewardPrice} credits?`)) {
+                            // Deduct credits
+                            const newCredits = currentCredits - rewardPrice;
+                            
+                            // Update localStorage
+                            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                            userData.credits = newCredits;
+                            localStorage.setItem('userData', JSON.stringify(userData));
+                            
+                            // Update credits display on this page
+                            document.getElementById('userCredits').textContent = newCredits;
+                            
+                            // Refresh credits display globally (for consistency across pages)
+                            if (window.refreshCreditsDisplay) {
+                                window.refreshCreditsDisplay();
+                            }
+                            
+                            // Add voucher to user's vouchers
+                            addVoucherToUser(rewardTitle, rewardCard);
+                            
+                            // Disable button and show success
+                            this.textContent = 'Purchased';
+                            this.style.backgroundColor = '#57b457';
+                            this.disabled = true;
+                            
+                            alert(`Congratulations! You've purchased ${rewardTitle}. Check 'My Vouchers' for your voucher.`);
                         }
                     });
                 });
+                
+                function addVoucherToUser(title, rewardCard) {
+                    // Get existing vouchers or create new array
+                    let userVouchers = JSON.parse(localStorage.getItem('userVouchers') || '[]');
+                    
+                    // Determine voucher type and generate code
+                    let voucherType = 'general';
+                    let voucherCode = 'VOUCHER-' + Date.now();
+                    
+                    if (title.toLowerCase().includes('netflix')) {
+                        voucherType = 'netflix';
+                        voucherCode = 'NETFLIX-2024-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+                    } else if (title.toLowerCase().includes('steam')) {
+                        voucherType = 'steam';
+                        voucherCode = 'STEAM-2024-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+                    } else if (title.toLowerCase().includes('spotify')) {
+                        voucherType = 'spotify';
+                        voucherCode = 'SPOTIFY-2024-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+                    } else if (title.toLowerCase().includes('uber')) {
+                        voucherType = 'uber';
+                        voucherCode = 'UBER-2024-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+                    } else if (title.toLowerCase().includes('amazon')) {
+                        voucherType = 'amazon';
+                        voucherCode = 'AMAZON-2024-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+                    } else if (title.toLowerCase().includes('starbucks')) {
+                        voucherType = 'starbucks';
+                        voucherCode = 'STARBUCKS-2024-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+                    }
+                    
+                    // Create voucher object
+                    const newVoucher = {
+                        id: Date.now(),
+                        title: title,
+                        type: voucherType,
+                        code: voucherCode,
+                        purchasedDate: new Date().toISOString(),
+                        expiresDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(), // 90 days from now
+                        status: 'active'
+                    };
+                    
+                    // Add to user's vouchers
+                    userVouchers.push(newVoucher);
+                    localStorage.setItem('userVouchers', JSON.stringify(userVouchers));
+                }
     
                 document.getElementById('logoutBtn').addEventListener('click', function (e) {
                     e.preventDefault();

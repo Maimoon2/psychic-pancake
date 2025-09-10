@@ -481,22 +481,160 @@
                 }
             }
     
-            @media (max-width: 576px) {
+                        @media (max-width: 576px) {
                 .voucher-grid {
                     grid-template-columns: 1fr;
                 }
-    
+
                 .dashboard-header {
                     flex-direction: column;
                     align-items: flex-start;
                     gap: 15px;
                 }
-    
+
                 .voucher-tabs {
                     overflow-x: auto;
                     white-space: nowrap;
                     width: 100%;
                 }
+            }
+
+            /* Modal Styles */
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 1000;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.8);
+                backdrop-filter: blur(5px);
+            }
+
+            .modal-content {
+                background-color: #1a2a38;
+                margin: 10% auto;
+                padding: 0;
+                border-radius: 15px;
+                width: 90%;
+                max-width: 500px;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+                animation: modalSlideIn 0.3s ease-out;
+            }
+
+            @keyframes modalSlideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-50px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .modal-header {
+                background: linear-gradient(135deg, #00e5ff 0%, #0097b2 100%);
+                color: #0f1923;
+                padding: 20px;
+                border-radius: 15px 15px 0 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .modal-title {
+                font-size: 20px;
+                font-weight: 700;
+                margin: 0;
+            }
+
+            .close {
+                color: #0f1923;
+                font-size: 28px;
+                font-weight: bold;
+                cursor: pointer;
+                transition: opacity 0.3s;
+            }
+
+            .close:hover {
+                opacity: 0.7;
+            }
+
+            .modal-body {
+                padding: 30px;
+                text-align: center;
+            }
+
+            .voucher-code-container {
+                background-color: #162534;
+                border: 2px dashed #00e5ff;
+                border-radius: 10px;
+                padding: 20px;
+                margin: 20px 0;
+                position: relative;
+            }
+
+            .voucher-code {
+                font-family: 'Courier New', monospace;
+                font-size: 24px;
+                font-weight: bold;
+                color: #00e5ff;
+                letter-spacing: 2px;
+                margin: 0;
+                word-break: break-all;
+            }
+
+            .copy-btn {
+                background-color: #00e5ff;
+                color: #0f1923;
+                border: none;
+                padding: 12px 25px;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+                margin-top: 15px;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .copy-btn:hover {
+                background-color: #00c2e0;
+                transform: translateY(-2px);
+            }
+
+            .copy-btn.copied {
+                background-color: #57b457;
+            }
+
+            .modal-footer {
+                padding: 20px 30px;
+                border-top: 1px solid #2a3a4a;
+                text-align: center;
+            }
+
+            .modal-info {
+                color: #a0aec0;
+                font-size: 14px;
+                margin-bottom: 15px;
+            }
+
+            .modal-close-btn {
+                background-color: transparent;
+                color: #a0aec0;
+                border: 1px solid #2a3a4a;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .modal-close-btn:hover {
+                background-color: rgba(255, 255, 255, 0.05);
+                color: #ffffff;
             }
         </style>
         <!-- Font Awesome for icons -->
@@ -561,7 +699,7 @@
                     <div class="header-actions">
                         <button class="btn btn-outline">
                             <i class="fas fa-coins"></i>
-                            <span id="userCredits">300</span> Credits
+                            <span id="userCredits">0</span> Credits
                         </button>
                         <a href="Reward.html" class="btn btn-primary">
                             <i class="fas fa-plus"></i>
@@ -571,159 +709,283 @@
                 </div>
     
     
-                    <!-- My Vouchers Tab Content -->
-                    <div class="voucher-grid">
-                        <div class="voucher-card">
-                            <div class="voucher-badge">NEW</div>
-                            <div class="voucher-header netflix-header">
-                                <i class="fas fa-film"></i>&nbsp; NETFLIX
-                            </div>
-                            <div class="voucher-body">
-                                <div class="voucher-value">
-                                    <i class="fas fa-ticket-alt"></i> $15
-                                </div>
-                                <div class="voucher-description">
-                                    Netflix 1-Month Premium subscription. Enjoy unlimited movies and TV shows.
-                                </div>
-                                <button class="btn btn-primary" style="width: 100%;">Use Voucher</button>
-                                <div class="voucher-meta">
-                                    <span><i class="far fa-calendar-alt"></i> Expires: May 15, 2025</span>
-                                    <span><i class="fas fa-tag"></i> Streaming</span>
-                                </div>
-                            </div>
-                        </div>
-    
-                        <div class="voucher-card">
-                            <div class="voucher-header uber-header">
-                                <i class="fas fa-utensils"></i>&nbsp; UBEREATS
-                            </div>
-                            <div class="voucher-body">
-                                <div class="voucher-value">
-                                    <i class="fas fa-ticket-alt"></i> $10
-                                </div>
-                                <div class="voucher-description">
-                                    $10 off your next UberEats order. Valid for orders over $20.
-                                </div>
-                                <button class="btn btn-primary" style="width: 100%;">Use Voucher</button>
-                                <div class="voucher-meta">
-                                    <span><i class="far fa-calendar-alt"></i> Expires: Apr 30, 2025</span>
-                                    <span><i class="fas fa-tag"></i> Food</span>
-                                </div>
-                            </div>
-                        </div>
-    
-                        <div class="voucher-card">
-                            <div class="voucher-header amazon-header">
-                                <i class="fas fa-shopping-cart"></i>&nbsp; AMAZON
-                            </div>
-                            <div class="voucher-body">
-                                <div class="voucher-value">
-                                    <i class="fas fa-ticket-alt"></i> $20
-                                </div>
-                                <div class="voucher-description">
-                                    $20 Amazon Gift Card. Use on millions of items across Amazon.
-                                </div>
-                                <button class="btn btn-primary" style="width: 100%;">Use Voucher</button>
-                                <div class="voucher-meta">
-                                    <span><i class="far fa-calendar-alt"></i> Expires: May 25, 2025</span>
-                                    <span><i class="fas fa-tag"></i> Shopping</span>
-                                </div>
-                            </div>
-                        </div>
-    
-                        <div class="voucher-card">
-                            <div class="voucher-header spotify-header">
-                                <i class="fas fa-music"></i>&nbsp; SPOTIFY
-                            </div>
-                            <div class="voucher-body">
-                                <div class="voucher-value">
-                                    <i class="fas fa-ticket-alt"></i> $12
-                                </div>
-                                <div class="voucher-description">
-                                    Spotify Premium 1-Month subscription. Ad-free music streaming.
-                                </div>
-                                <button class="btn btn-primary" style="width: 100%;">Use Voucher</button>
-                                <div class="voucher-meta">
-                                    <span><i class="far fa-calendar-alt"></i> Expires: Jun 10, 2025</span>
-                                    <span><i class="fas fa-tag"></i> Music</span>
-                                </div>
-                            </div>
-                        </div>
-    
-                        <div class="voucher-card">
-                            <div class="voucher-header steam-header">
-                                <i class="fas fa-gamepad"></i>&nbsp; STEAM
-                            </div>
-                            <div class="voucher-body">
-                                <div class="voucher-value">
-                                    <i class="fas fa-ticket-alt"></i> $25
-                                </div>
-                                <div class="voucher-description">
-                                    $25 Steam Wallet Credit. Use for games, software and hardware.
-                                </div>
-                                <button class="btn btn-primary" style="width: 100%;">Use Voucher</button>
-                                <div class="voucher-meta">
-                                    <span><i class="far fa-calendar-alt"></i> Expires: Jul 15, 2025</span>
-                                    <span><i class="fas fa-tag"></i> Gaming</span>
-                                </div>
-                            </div>
-                        </div>
-    
-                        <div class="voucher-card">
-                            <div class="voucher-header starbucks-header">
-                                <i class="fas fa-coffee"></i>&nbsp; STARBUCKS
-                            </div>
-                            <div class="voucher-body">
-                                <div class="voucher-value">
-                                    <i class="fas fa-ticket-alt"></i> $15
-                                </div>
-                                <div class="voucher-description">
-                                    $15 Starbucks Gift Card. Valid at any Starbucks location.
-                                </div>
-                                <button class="btn btn-primary" style="width: 100%;">Use Voucher</button>
-                                <div class="voucher-meta">
-                                    <span><i class="far fa-calendar-alt"></i> Expires: Jun 5, 2025</span>
-                                    <span><i class="fas fa-tag"></i> Beverage</span>
-                                </div>
-                            </div>
-                        </div>
+                                        <!-- My Vouchers Tab Content -->
+                    <div class="voucher-grid" id="voucherGrid">
+                        <!-- Vouchers will be dynamically loaded here -->
+                    </div>
+                    
+                    <!-- Empty state message -->
+                    <div id="emptyState" class="empty-state" style="display: none; text-align: center; padding: 60px 20px; color: #a0aec0;">
+                        <i class="fas fa-ticket-alt" style="font-size: 64px; margin-bottom: 20px; opacity: 0.3;"></i>
+                        <h3 style="margin-bottom: 10px; color: #ffffff;">No Vouchers Yet</h3>
+                        <p style="margin-bottom: 30px;">You haven't purchased any vouchers yet. Visit the Voucher Marketplace to get started!</p>
+                        <a href="Reward.html" class="btn btn-primary">
+                            <i class="fas fa-shopping-cart"></i>
+                            Browse Vouchers
+                        </a>
                     </div>
                 </div>
             </main>
         </div>
+
+        <!-- Voucher Code Modal -->
+        <div id="voucherModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Voucher Code</h2>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <p>Your voucher code is ready!</p>
+                    <div class="voucher-code-container">
+                        <p class="voucher-code" id="voucherCode">NETFLIX-2024-ABC123</p>
+                    </div>
+                    <button class="copy-btn" id="copyBtn">
+                        <i class="fas fa-copy"></i>
+                        Copy Code
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <p class="modal-info">Use this code at checkout to redeem your voucher</p>
+                    <button class="modal-close-btn" id="modalCloseBtn">Close</button>
+                </div>
+            </div>
+        </div>
     
+        <script src="app.js"></script>
         <script>
-            /*document.addEventListener('DOMContentLoaded', function () {
-                // Tab switching functionality
-                const tabs = document.querySelectorAll('.voucher-tab');
-                const tabContents = document.querySelectorAll('.card > div:not(.voucher-tabs, .card-header)');
+            document.addEventListener('DOMContentLoaded', function () {
+                // Load and display user's vouchers
+                loadUserVouchers();
                 
-                tabs.forEach((tab, index) => {
-                    tab.addEventListener('click', function() {
-                        // Remove active class from all tabs
-                        tabs.forEach(t => t.classList.remove('active'));
+                // Voucher codes for different services (fallback for demo)
+                const voucherCodes = {
+                    'netflix': 'NETFLIX-2024-ABC123',
+                    'uber': 'UBER-2024-XYZ789',
+                    'amazon': 'AMAZON-2024-DEF456',
+                    'spotify': 'SPOTIFY-2024-GHI789',
+                    'steam': 'STEAM-2024-JKL012',
+                    'starbucks': 'STARBUCKS-2024-MNO345'
+                };
+                
+                function loadUserVouchers() {
+                    const userVouchers = JSON.parse(localStorage.getItem('userVouchers') || '[]');
+                    const voucherGrid = document.getElementById('voucherGrid');
+                    const emptyState = document.getElementById('emptyState');
+                    
+                    if (userVouchers.length === 0) {
+                        voucherGrid.style.display = 'none';
+                        emptyState.style.display = 'block';
+                        return;
+                    }
+                    
+                    voucherGrid.style.display = 'grid';
+                    emptyState.style.display = 'none';
+                    voucherGrid.innerHTML = '';
+                    
+                    userVouchers.forEach(voucher => {
+                        const voucherCard = createVoucherCard(voucher);
+                        voucherGrid.appendChild(voucherCard);
+                    });
+                }
+                
+                function createVoucherCard(voucher) {
+                    const card = document.createElement('div');
+                    card.className = 'voucher-card';
+                    card.setAttribute('data-voucher-id', voucher.id);
+                    
+                    // Determine header style and icon based on voucher type
+                    let headerClass = 'voucher-header';
+                    let icon = 'fas fa-ticket-alt';
+                    let serviceName = voucher.title.toUpperCase();
+                    
+                    switch(voucher.type) {
+                        case 'netflix':
+                            headerClass += ' netflix-header';
+                            icon = 'fas fa-film';
+                            serviceName = 'NETFLIX';
+                            break;
+                        case 'uber':
+                            headerClass += ' uber-header';
+                            icon = 'fas fa-utensils';
+                            serviceName = 'UBEREATS';
+                            break;
+                        case 'amazon':
+                            headerClass += ' amazon-header';
+                            icon = 'fas fa-shopping-cart';
+                            serviceName = 'AMAZON';
+                            break;
+                        case 'spotify':
+                            headerClass += ' spotify-header';
+                            icon = 'fas fa-music';
+                            serviceName = 'SPOTIFY';
+                            break;
+                        case 'steam':
+                            headerClass += ' steam-header';
+                            icon = 'fas fa-gamepad';
+                            serviceName = 'STEAM';
+                            break;
+                        case 'starbucks':
+                            headerClass += ' starbucks-header';
+                            icon = 'fas fa-coffee';
+                            serviceName = 'STARBUCKS';
+                            break;
+                        default:
+                            headerClass += ' voucher-header';
+                            break;
+                    }
+                    
+                    // Format expiration date
+                    const expiresDate = new Date(voucher.expiresDate);
+                    const formattedDate = expiresDate.toLocaleDateString('en-US', { 
+                        month: 'short', 
+                        day: 'numeric', 
+                        year: 'numeric' 
+                    });
+                    
+                    // Determine category tag
+                    let categoryTag = 'General';
+                    switch(voucher.type) {
+                        case 'netflix':
+                        case 'spotify':
+                            categoryTag = 'Streaming';
+                            break;
+                        case 'uber':
+                        case 'starbucks':
+                            categoryTag = 'Food';
+                            break;
+                        case 'amazon':
+                            categoryTag = 'Shopping';
+                            break;
+                        case 'steam':
+                            categoryTag = 'Gaming';
+                            break;
+                    }
+                    
+                    card.innerHTML = `
+                        <div class="${headerClass}">
+                            <i class="${icon}"></i>&nbsp; ${serviceName}
+                        </div>
+                        <div class="voucher-body">
+                            <div class="voucher-value">
+                                <i class="fas fa-ticket-alt"></i> Voucher
+                            </div>
+                            <div class="voucher-description">
+                                ${voucher.title}. Use this voucher code at checkout.
+                            </div>
+                            <button class="btn btn-primary" style="width: 100%;" data-voucher-code="${voucher.code}">Redeem</button>
+                            <div class="voucher-meta">
+                                <span><i class="far fa-calendar-alt"></i> Expires: ${formattedDate}</span>
+                                <span><i class="fas fa-tag"></i> ${categoryTag}</span>
+                            </div>
+                        </div>
+                    `;
+                    
+                    return card;
+                }
+
+                // Get modal elements
+                const modal = document.getElementById('voucherModal');
+                const voucherCodeElement = document.getElementById('voucherCode');
+                const copyBtn = document.getElementById('copyBtn');
+                const closeBtn = document.querySelector('.close');
+                const modalCloseBtn = document.getElementById('modalCloseBtn');
+
+                // Add click event listeners to redeem buttons (using event delegation for dynamic content)
+                document.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('btn-primary') && e.target.textContent.trim() === 'Redeem') {
+                        const voucherCode = e.target.getAttribute('data-voucher-code');
                         
-                        // Add active class to clicked tab
-                        this.classList.add('active');
+                        if (voucherCode) {
+                            // Set the voucher code from the data attribute
+                            voucherCodeElement.textContent = voucherCode;
+                            
+                            // Show the modal
+                            modal.style.display = 'block';
+                        } else {
+                            // Fallback for demo vouchers
+                            const voucherCard = e.target.closest('.voucher-card');
+                            let service = 'netflix'; // default
+                            const header = voucherCard.querySelector('.voucher-header');
+                            if (header) {
+                                const headerText = header.textContent.toLowerCase();
+                                if (headerText.includes('netflix')) service = 'netflix';
+                                else if (headerText.includes('uber')) service = 'uber';
+                                else if (headerText.includes('amazon')) service = 'amazon';
+                                else if (headerText.includes('spotify')) service = 'spotify';
+                                else if (headerText.includes('steam')) service = 'steam';
+                                else if (headerText.includes('starbucks')) service = 'starbucks';
+                            }
+                            
+                            // Set the voucher code
+                            voucherCodeElement.textContent = voucherCodes[service];
+                            
+                            // Show the modal
+                            modal.style.display = 'block';
+                        }
+                    }
+                });
+
+                // Copy functionality
+                copyBtn.addEventListener('click', function() {
+                    const code = voucherCodeElement.textContent;
+                    
+                    // Copy to clipboard
+                    navigator.clipboard.writeText(code).then(function() {
+                        // Update button to show copied state
+                        const originalText = copyBtn.innerHTML;
+                        copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                        copyBtn.classList.add('copied');
                         
-                        // Hide all tab contents
-                        tabContents.forEach(content => {
-                            content.style.display = 'none';
-                        });
+                        // Reset after 2 seconds
+                        setTimeout(function() {
+                            copyBtn.innerHTML = originalText;
+                            copyBtn.classList.remove('copied');
+                        }, 2000);
+                    }).catch(function(err) {
+                        // Fallback for older browsers
+                        const textArea = document.createElement('textarea');
+                        textArea.value = code;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textArea);
                         
-                        // Show selected tab content
-                        tabContents[index].style.display = index === 0 ? 'grid' : 'block';
+                        // Update button to show copied state
+                        const originalText = copyBtn.innerHTML;
+                        copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                        copyBtn.classList.add('copied');
+                        
+                        // Reset after 2 seconds
+                        setTimeout(function() {
+                            copyBtn.innerHTML = originalText;
+                            copyBtn.classList.remove('copied');
+                        }, 2000);
                     });
                 });
-     
-                // Initialize first tab as active
-                tabs[0].click();
-                
-                // Logout functionality
-                document.getElementById('logoutBtn').addEventListener('click', function (e) {
-                    e.preventDefault
+
+                // Close modal functionality
+                function closeModal() {
+                    modal.style.display = 'none';
+                }
+
+                closeBtn.addEventListener('click', closeModal);
+                modalCloseBtn.addEventListener('click', closeModal);
+
+                // Close modal when clicking outside of it
+                window.addEventListener('click', function(event) {
+                    if (event.target === modal) {
+                        closeModal();
+                    }
                 });
-            */
+
+                // Close modal with Escape key
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === 'Escape' && modal.style.display === 'block') {
+                        closeModal();
+                    }
+                });
+            });
         </script>
     </body>
     

@@ -80,12 +80,7 @@
                 color: #444;
             }
             
-            .score {
-                font-size: 24px;
-                font-weight: bold;
-                color: #4CAF50;
-                margin: 15px 0;
-            }
+
             
             .choice-buttons {
                 display: flex;
@@ -95,25 +90,63 @@
                 margin: 20px 0;
             }
             
-            .game-over {
+
+
+            .win-modal {
                 display: none;
-                background-color: rgba(0, 0, 0, 0.7);
+                background-color: rgba(0, 0, 0, 0.8);
                 color: white;
-                padding: 20px;
-                border-radius: 10px;
+                padding: 30px;
+                border-radius: 15px;
                 position: absolute;
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
-                z-index: 10;
-                width: 80%;
-                max-width: 300px;
+                z-index: 15;
+                width: 85%;
+                max-width: 350px;
                 text-align: center;
+                border: 2px solid #00e5ff;
+                box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
             }
             
-            .game-over h2 {
+            .win-modal h2 {
                 margin-top: 0;
+                color: #00e5ff;
+                font-size: 28px;
+                margin-bottom: 15px;
+            }
+            
+            .win-modal .credits-earned {
+                font-size: 24px;
                 color: #4CAF50;
+                font-weight: bold;
+                margin: 15px 0;
+            }
+            
+            .win-modal .score-info {
+                color: #a0aec0;
+                margin: 10px 0;
+            }
+            
+            .win-modal button {
+                background-color: #00e5ff;
+                color: #0f1923;
+                font-weight: bold;
+                margin-top: 15px;
+            }
+            
+            .win-modal button:hover {
+                background-color: #00c2e0;
+            }
+            
+            .win-modal #back-to-games {
+                background-color: #6c757d;
+                margin-left: 10px;
+            }
+            
+            .win-modal #back-to-games:hover {
+                background-color: #5a6268;
             }
             
             button {
@@ -208,7 +241,7 @@
                     <button id="six-button" class="choice-button">6</button>
                 </div>
                 
-                <div class="score">Score: <span id="score">0</span></div>
+
                 
                 <div class="dice">
                     <div class="dice-inner" id="dice">
@@ -223,22 +256,27 @@
                 <button id="roll-button" disabled>Roll Dice</button>
             </div>
             
-            <div id="game-over" class="game-over">
-                <h2>Game Over!</h2>
-                <p>Your final score: <span id="final-score">0</span></p>
-                <button id="play-again">Play Again</button>
+
+
+            <div id="win-modal" class="win-modal">
+                <h2>🎉 You Won! 🎉</h2>
+                <div class="credits-earned">+<span id="credits-earned">0</span> Credits</div>
+
+                <p>Great job! Your credits have been added to your account.</p>
+                <button id="continue-playing">Continue Playing</button>
+                <button id="back-to-games">Back to Games</button>
             </div>
         </div>
-    
+        <script src="app.js"></script>
         <script>
             const dice = document.getElementById('dice');
             const rollButton = document.getElementById('roll-button');
             const result = document.getElementById('result');
-            const scoreElement = document.getElementById('score');
-            const gameOver = document.getElementById('game-over');
-            const finalScore = document.getElementById('final-score');
-            const playAgainButton = document.getElementById('play-again');
             const gameArea = document.getElementById('game-area');
+            const winModal = document.getElementById('win-modal');
+            const creditsEarned = document.getElementById('credits-earned');
+            const continuePlayingButton = document.getElementById('continue-playing');
+            const backToGamesButton = document.getElementById('back-to-games');
             
             const numberButtons = [
                 document.getElementById('one-button'),
@@ -249,7 +287,6 @@
                 document.getElementById('six-button')
             ];
             
-            let score = 0;
             let isRolling = false;
             let userChoice = null;
             
@@ -303,16 +340,14 @@
                     result.textContent = `Rolled a ${rollResult}!`;
                     
                     if (userChoice === rollResult) {
-                        score++;
-                        scoreElement.textContent = score;
                         result.textContent += ' You guessed correctly!';
                         setTimeout(() => {
-                            resetForNextRound();
+                            showWinModal();
                         }, 1500);
                     } else {
                         result.textContent += ' Wrong guess!';
                         setTimeout(() => {
-                            endGame();
+                            resetForNextRound();
                         }, 1500);
                     }
                     
@@ -330,22 +365,57 @@
                 result.textContent = '';
             }
             
-            function endGame() {
-                finalScore.textContent = score;
+            function showWinModal() {
+                // Award 5 credits for each correct guess
+                const creditsToAward = 5;
+                
+                // Update modal content
+                creditsEarned.textContent = creditsToAward;
+                
+                // Show modal
                 gameArea.style.opacity = '0.5';
-                gameOver.style.display = 'block';
+                winModal.style.display = 'block';
+                
+                // Add credits to user's account
+                addCreditsToAccount(creditsToAward);
             }
             
-            playAgainButton.addEventListener('click', () => {
-                score = 0;
-                scoreElement.textContent = '0';
+            function addCreditsToAccount(credits) {
+                try {
+                    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                    const currentCredits = userData.credits || 0;
+                    const newCredits = currentCredits + credits;
+                    
+                    userData.credits = newCredits;
+                    localStorage.setItem('userData', JSON.stringify(userData));
+                    
+                    // Refresh credits display if the function is available
+                    if (window.refreshCreditsDisplay) {
+                        window.refreshCreditsDisplay();
+                    }
+                    
+                    // Also update any credits display on this page if it exists
+                    const creditsDisplay = document.getElementById('userCredits');
+                    if (creditsDisplay) {
+                        creditsDisplay.textContent = newCredits;
+                    }
+                    
+                    console.log(`Added ${credits} credits. New total: ${newCredits}`);
+                } catch (error) {
+                    console.error('Error adding credits:', error);
+                }
+            }
+            
+
+            
+            continuePlayingButton.addEventListener('click', () => {
                 gameArea.style.opacity = '1';
-                gameOver.style.display = 'none';
-                
-                dice.innerHTML = '';
-                dice.appendChild(createDiceFace(1));
-                
+                winModal.style.display = 'none';
                 resetForNextRound();
+            });
+            
+            backToGamesButton.addEventListener('click', () => {
+                window.location.href = 'games.html';
             });
             
             dice.innerHTML = '';
